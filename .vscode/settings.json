@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "typeinfo": "c",
+        "hashmap.h": "c",
+        "dbllist.h": "c",
+        "stdlib.h": "c"
+    }
+}
