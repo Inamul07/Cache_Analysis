@@ -9,7 +9,10 @@
 
 int main() {
 
-    
+    struct hashmap* map = hmap_create();
+    hmap_insert(map, 10, 10);
+
+    printf("%d", hmap_get(map, 10));
 
     return 0;
 }

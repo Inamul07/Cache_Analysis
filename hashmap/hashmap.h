@@ -55,9 +55,6 @@ void hashmap_set_grow_by_power(struct hashmap *map, size_t power);
 void hashmap_set_load_factor(struct hashmap *map, double load_factor);
 
 
-// @author: Inamul07
-// { - (Inamul07) start
-
 struct pair;
 
 
@@ -67,7 +64,6 @@ void* hmap_get(struct hashmap*, int);
 void* hmap_remove(struct hashmap*, int);
 int hmap_contains(struct hashmap*, int);
 
-// } - (Inamul07) end
 
 // DEPRECATED: use `hashmap_new_with_allocator`
 void hashmap_set_allocator(void *(*malloc)(size_t), void (*free)(void*));

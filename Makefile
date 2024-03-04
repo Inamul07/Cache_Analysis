@@ -1,18 +1,25 @@
+test: main.o dbllist.o hashmap.o
+	gcc main.o dbllist.o hashmap.o -o final
+	rm dbllist.o hashmap.o main.o
+	./final
+
 all: final
+
+main.o: main.c
+	gcc -Wno-format -Wno-int-conversion -c main.c
+
+final: main.c
+	gcc main.c -o main -L -ldatastructures
+	./main
+
+dbllist.o: dbllist/dbllist.c
+	gcc -c dbllist/dbllist.c
 
 hashmap.o: hashmap/hashmap.c
 	gcc -c hashmap/hashmap.c
 
-dbllist.o:
-	gcc -c dbllist/dbllist.c
-
-main.o: main.c
-	gcc -c main.c
-
-final: main.o hashmap.o dbllist.o
-	gcc main.o hashmap.o dbllist.o -o final
-	./final
-
+lib: dbllist.o hashmap.o
+	ar rcs libdatastructures.a dbllist.o hashmap.o
 
 clean: 
-	rm main.o hashmap.o dbllist.o final
+	rm main.o final

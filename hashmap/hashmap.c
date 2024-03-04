@@ -475,17 +475,13 @@ bool hashmap_iter(struct hashmap *map, size_t *i, void **item) {
     return true;
 }
 
-// @author: Inamul07
-// { - (Inamul07) start
-
-
 struct pair {
     int key;
     void* value;
 };
 
 uint64_t hash_func(const void *item, uint64_t seed0, uint64_t seed1) {
-    struct pair *p = item;
+    const struct pair *p = item;
     int* key = (int*) malloc(sizeof(int));
     key[0] = p->key;
     return hashmap_sip(key, sizeof(p->key), seed0, seed1);
@@ -511,7 +507,7 @@ void hmap_insert(struct hashmap *map, int key, void* node) {
 }
 
 void* hmap_get(struct hashmap* map, int key) {
-    struct pair *p;
+    const struct pair *p;
     p = hashmap_get(map, &(struct pair){ .key=key });
     if(p == NULL) {
         return NULL;
@@ -520,7 +516,7 @@ void* hmap_get(struct hashmap* map, int key) {
 }
 
 void* hmap_remove(struct hashmap* map, int key) {
-    struct pair* p;
+    const struct pair* p;
     p = hashmap_delete(map, &(struct pair) {.key=key});
     if(p == NULL) {
         return NULL;
@@ -535,8 +531,6 @@ int hmap_contains(struct hashmap* map, int key) {
     }
     return 1;
 }
-
-// } - (Inamul07) end
 
 
 //-----------------------------------------------------------------------------

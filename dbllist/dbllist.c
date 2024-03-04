@@ -9,7 +9,7 @@ typedef struct node {
 } Node;
 
 Node* node_create(int data) {
-    Node* node = (struct node*) malloc(sizeof(node));
+    Node* node = (Node*) malloc(sizeof(node));
     node->val = data;
     return node;
 }
@@ -25,7 +25,7 @@ typedef struct dbllist_ {
 } dbllist;
 
 dbllist* dbllist_create() {
-    dbllist* list = (struct dbllist*) malloc(sizeof(dbllist));
+    dbllist* list = (dbllist*) malloc(sizeof(dbllist));
     list->head = node_create(-1);
     list->tail = node_create(-1);
     list->head->next = list->tail;
