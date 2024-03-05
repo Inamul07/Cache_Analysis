@@ -10,15 +10,14 @@
 
 int main() {
 
-    clock_cache* cache = clock_init(3);
+    lru_cache* cache = lru_init(3);
 
-    int pages[] = {10,15,25,10,30,50,20,35,30,20,50,70};
-
+    int pages[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2};
     int size = sizeof(pages) / sizeof(pages[0]);
 
-    clock_put_array(cache, pages, size);
+    lru_put_array(cache, pages, size);
 
-    clock_analysis(cache);
+    lru_analysis(cache);
 
     dbllist* list = dbllist_create();
     dbllist_insert(list, 10);
