@@ -4,12 +4,16 @@
 #include <stdlib.h>
 #include<stdio.h>
 
+// CODE_REVIEW: single typedef is enough
 typedef struct clock_node_ {
     int data;
+    // CODE_REVIEW: give a proper name
     bool r;
 } clock_node;
 
+// CODE_REVIEW: single typedef is enough
 typedef struct clock_cache_ {
+    // CODE_REVIEW: array should be ** pointer
     clock_node* cache;
     struct hashmap* map;
     int currIdx, currSize;
@@ -47,6 +51,7 @@ void clock_access(clock_cache* cache, int data) {
         } else {
             cache->currSize++;
         }
+        //CODE_REVIEW: hmap_insert expects void* but you are passing int
         hmap_insert(cache->map, data, cache->currIdx);
         cache->cache[cache->currIdx].data = data;
         cache->cache[cache->currIdx].r = 1;
@@ -60,6 +65,7 @@ void print_clock_node(clock_node node) {
     printf("(%d, %d)", node.data, node.r);
 }
 
+// CODE_REVIEW: print from data pointed by clock hand.
 void clock_print_buffer(clock_cache* cache) {
     printf("[");
     for(int i = 0; i < cache->currSize; i++) {
