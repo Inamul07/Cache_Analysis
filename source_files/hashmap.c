@@ -5,9 +5,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <stddef.h>
-#include "hashmap.h"
+#include <stdint.h>
+#include "../header_files/hashmap.h"
+
 
 #define GROW_AT   0.60 /* 60% */
 #define SHRINK_AT 0.10 /* 10% */
@@ -525,13 +526,17 @@ void* hmap_remove(struct hashmap* map, int key) {
 }
 
 int hmap_contains(struct hashmap* map, int key) {
-    struct node* node = hmap_get(map, key);
-    if(node == NULL) {
+    const struct pair *p;
+    p = hashmap_get(map, &(struct pair){ .key=key });
+    if(p == NULL) {
         return 0;
     }
     return 1;
 }
 
+void hmap_free(struct hashmap* map) {
+    hashmap_free(map);
+}
 
 //-----------------------------------------------------------------------------
 // SipHash reference C implementation

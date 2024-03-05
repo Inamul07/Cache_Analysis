@@ -1,25 +1,27 @@
-test: main.o dbllist.o hashmap.o
-	gcc main.o dbllist.o hashmap.o -o final
-	rm dbllist.o hashmap.o main.o
-	./final
-
 all: final
 
+final: main.o lru.o clock.o
+	gcc -o final main.o lru.o clock.o -L. -ldslibrary
+	./final
+
 main.o: main.c
-	gcc -Wno-format -Wno-int-conversion -c main.c
+	gcc -c main.c
 
-final: main.c
-	gcc main.c -o main -L -ldatastructures
-	./main
+dbllist.o: source_files/dbllist.c
+	gcc -c source_files/dbllist.c -fpic
 
-dbllist.o: dbllist/dbllist.c
-	gcc -c dbllist/dbllist.c
+hashmap.o: source_files/hashmap.c
+	gcc -c source_files/hashmap.c -fpic
 
-hashmap.o: hashmap/hashmap.c
-	gcc -c hashmap/hashmap.c
+lru.o: lru/lru.c
+	gcc -c lru/lru.c
 
-lib: dbllist.o hashmap.o
-	ar rcs libdatastructures.a dbllist.o hashmap.o
+clock.o: clock/clock.c
+	gcc -c clock/clock.c
+
+makelib: dbllist.o hashmap.o
+	gcc dbllist.o hashmap.o -shared -o libdslibrary.so
+	rm dbllist.o hashmap.o
 
 clean: 
-	rm main.o final
+	rm main.o lru.o clock.o final

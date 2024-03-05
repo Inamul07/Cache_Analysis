@@ -1,6 +1,6 @@
-#include "dbllist.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "../header_files/dbllist.h"
 
 typedef struct node {
     int val;
@@ -53,30 +53,28 @@ void dbllist_insert_node(dbllist* list, Node* node) {
     list->size++;
 }
 
-int dbllist_remove_head(dbllist* list) {
+Node* dbllist_remove_head(dbllist* list) {
     if(list->size == 0) {
-        return 0;
+        return NULL;
     }
     Node* head = list->head->next;
     Node* next = head->next;
     list->head->next = next;
     next->prev = list->head;
     list->size--;
-    free(head);
-    return 1;
+    return head;
 }
 
-int dbllist_remove_node(dbllist* list, Node* node) {
+Node* dbllist_remove_node(dbllist* list, Node* node) {
     if(list->size == 0) {
-        return 0;
+        return NULL;
     }
     Node* prev = node->prev;
     Node* next = node->next;
     prev->next = next;
     next->prev = prev;
     list->size--;
-    free(node);
-    return 1;
+    return node;
 }
 
 void dbllist_print(dbllist* list) {

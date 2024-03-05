@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "../dbllist/dbllist.h"
+#include "dbllist.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -63,6 +63,7 @@ void hmap_insert(struct hashmap*, int, void*);
 void* hmap_get(struct hashmap*, int);
 void* hmap_remove(struct hashmap*, int);
 int hmap_contains(struct hashmap*, int);
+void hmap_free(struct hashmap*);
 
 
 // DEPRECATED: use `hashmap_new_with_allocator`
