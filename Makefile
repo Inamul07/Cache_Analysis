@@ -1,11 +1,14 @@
 all: final
 
-final: main.o
-	gcc -o final main.o -L. -ldslibrary -Wl,-rpath,.
+final: main.o clock.o
+	gcc -o final main.o clock.o -L. -ldslibrary -Wl,-rpath,.
 	./final
 
 main.o: main.c
 	gcc -c main.c
+
+clock.o: clock/clock.c
+	gcc -Wno-int-conversion -c clock/clock.c
 
 dbllist.o: source_files/dbllist.c
 	gcc -c source_files/dbllist.c -fpic
@@ -18,4 +21,4 @@ makelib: dbllist.o hashmap.o
 	rm dbllist.o hashmap.o
 
 clean: 
-	rm main.o final
+	rm main.o clock.o final
