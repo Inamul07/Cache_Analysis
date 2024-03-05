@@ -1,11 +1,17 @@
 #include "lru.h"
+// CODE_REVIEW: change includes in this pattern. dbl/dbllist.h & hashmap/hashmap.h
 #include "../header_files/dbllist.h"
 #include "../header_files/hashmap.h"
+// CODE_REVIEW: seperate standard headers and non-standard
 #include <stdlib.h>
 #include <stdio.h>
 
+// CODE_REVIEW:  handle null arguments
+
+// CODE_REVIEW: eliminate typdef
 typedef struct lru_cache_ {
     dbllist* list;
+    // CODE_REVIEW: add a typedef   
     struct hashmap* map;
     int currSize, capacity;
     int hitCount, missCount;
@@ -33,6 +39,7 @@ void lru_access(lru_cache* cache, int data) {
             hmap_remove(cache->map, node_val(head));
             free(head);
         } else {
+            // CODE_REVIEW: increment this after you add it to cache.
             cache->currSize++;
         }
         Node* node = node_create(data);
