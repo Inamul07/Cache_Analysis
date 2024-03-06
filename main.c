@@ -21,11 +21,11 @@ int main() {
 
     clock_cache* cache2 = clock_init(3);
 
-    pages[] = {10,15,25,10,30,50,20,35,30,20,50,70};
-    size = sizeof(pages) / sizeof(pages[0]);
+    int pages2[] = {10,15,25,10,30,50,20,35,30,20,50,70};
+    size = sizeof(pages2) / sizeof(pages2[0]);
 
     printf("\n");
-    clock_put_array(cache2, pages, size);
+    clock_put_array(cache2, pages2, size);
     clock_analysis(cache2);
     clock_destroy(cache2);
     printf("\n");

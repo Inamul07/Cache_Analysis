@@ -2,7 +2,7 @@ all: final
 
 final: main.o lru.o clock.o
 	gcc -o main main.o lru.o clock.o -L. -ldslibrary -Wl,-rpath,.
-	./final
+	./main
 
 main.o: main.c
 	gcc -c main.c
@@ -25,4 +25,4 @@ makelib: dbllist.o hashmap.o
 
 # CODE_REVIEW: this should never throw error even if files are not found
 clean: 
-    rm main.o lru.o clock.o final
+	rm main.o lru.o clock.o main
