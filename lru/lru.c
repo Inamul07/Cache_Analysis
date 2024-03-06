@@ -1,21 +1,20 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "lru.h"
 // CODE_REVIEW: change includes in this pattern. dbl/dbllist.h & hashmap/hashmap.h
 #include "../header_files/dbllist.h"
 #include "../header_files/hashmap.h"
-// CODE_REVIEW: seperate standard headers and non-standard
-#include <stdlib.h>
-#include <stdio.h>
 
 // CODE_REVIEW:  handle null arguments
 
-// CODE_REVIEW: eliminate typdef
-typedef struct lru_cache_ {
+struct lru_cache_ {
     dbllist* list;
     // CODE_REVIEW: add a typedef   
     struct hashmap* map;
     int currSize, capacity;
     int hitCount, missCount;
-} lru_cache;
+};
 
 lru_cache* lru_init(int capacity) {
     lru_cache* cache = (lru_cache*) malloc(sizeof(lru_cache));
@@ -38,13 +37,12 @@ void lru_access(lru_cache* cache, int data) {
             Node* head = dbllist_remove_head(cache->list);
             hmap_remove(cache->map, node_val(head));
             free(head);
-        } else {
-            // CODE_REVIEW: increment this after you add it to cache.
-            cache->currSize++;
+            cache->currSize--;
         }
         Node* node = node_create(data);
         dbllist_insert_node(cache->list, node);
         hmap_insert(cache->map, data, node);
+        cache->currSize++;
         cache->missCount++;
     }
 }
@@ -54,6 +52,8 @@ void lru_print_buffer(lru_cache* cache) {
 }
 
 void lru_analysis(lru_cache* cache) {
+    printf("Buffer = ");
+    lru_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
     float hitRatio = (cache->hitCount * 1.0) / (totalReference);
