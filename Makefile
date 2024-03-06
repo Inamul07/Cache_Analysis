@@ -23,6 +23,5 @@ makelib: dbllist.o hashmap.o
 	gcc dbllist.o hashmap.o -shared -o libdslibrary.so
 	rm dbllist.o hashmap.o
 
-# CODE_REVIEW: this should never throw error even if files are not found
 clean: 
-	rm main.o lru.o clock.o main
+	rm -f main.o lru.o clock.o main

@@ -1,8 +1,10 @@
-#include "clock.h"
-#include <stdbool.h>
-#include "../header_files/hashmap.h"
+#include <stdio.h>
 #include <stdlib.h>
-#include<stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include "../header_files/hashmap.h"
+#include "clock.h"
 
 struct clock_node_ {
     int data;
@@ -32,11 +34,17 @@ clock_cache* clock_init(int capacity) {
     return cache;
 }
 
+int* copyOf(int currIdx) {
+    int* idx = malloc(sizeof(int));
+    memcpy(idx, &currIdx, sizeof(int));
+    return idx;
+}
+
 void clock_access(clock_cache* cache, int data) {
     if(hmap_contains(cache->map, data)) {
         // hit
-        int page_idx = hmap_get(cache->map, data);
-        cache->cache[page_idx]->r_bit = 1;
+        int* page_idx = hmap_get(cache->map, data);
+        cache->cache[*page_idx]->r_bit = 1;
         cache->hitCount++;
     } else {
         // miss
@@ -49,8 +57,7 @@ void clock_access(clock_cache* cache, int data) {
             hmap_remove(cache->map, cache->cache[cache->currIdx]->data);
             cache->currSize--;
         }
-        //CODE_REVIEW: hmap_insert expects void* but you are passing int
-        hmap_insert(cache->map, data, cache->currIdx);
+        hmap_insert(cache->map, data, copyOf(cache->currIdx));
         cache->cache[cache->currIdx]->data = data;
         cache->cache[cache->currIdx]->r_bit = 0;
         cache->currSize++;

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stddef.h>
 
 #include "lru.h"
 // CODE_REVIEW: change includes in this pattern. dbl/dbllist.h & hashmap/hashmap.h
@@ -28,7 +29,7 @@ lru_cache* lru_init(int capacity) {
 
 void lru_access(lru_cache* cache, int data) {
     if(hmap_contains(cache->map, data)) { // If page in cache
-        Node* node = (Node*) hmap_get(cache->map, data);
+        Node* node = hmap_get(cache->map, data);
         dbllist_remove_node(cache->list, node);
         dbllist_insert_node(cache->list, node);
         cache->hitCount++;
