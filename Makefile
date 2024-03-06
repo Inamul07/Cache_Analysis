@@ -1,12 +1,12 @@
 all: final
 
-final: main.o clock.o
 # CODE_REVIEW: give a meaningful object name
-  	gcc -o final main.o clock.o -L. -ldslibrary -Wl,-rpath,.
+final: main.o clock.o
+	gcc -o final main.o clock.o -L. -ldslibrary -Wl,-rpath,.
 	./final
 
-main.o: main.c
 # CODE_REVIEW: understang -c flag
+main.o: main.c
 	gcc -c main.c
 
 clock.o: clock/clock.c
