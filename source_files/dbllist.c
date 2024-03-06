@@ -2,22 +2,34 @@
 #include <stdlib.h>
 #include "../header_files/dbllist.h"
 
+// CODE_REVIEW: add comments on how list will look before and after an operation
+// CODE_REVIEW: handle null pointers
+
+// CODE_REVIEW: two typedefs not required
 typedef struct node {
     int val;
     struct node* prev;
     struct node* next;
 } Node;
 
+// CODE_REVIEW: set prev, next as NULL -- Why is default value setting to NULL.
+// CODE_REVIEW: node create can have params for prev and next as well.
 Node* node_create(int data) {
     Node* node = (Node*) malloc(sizeof(node));
     node->val = data;
     return node;
 }
 
+// CODE_REVIEW: name it properly
 int node_val(Node* node) {
+    // CODE_REVIEW: what happens if node is null? check it and handle properly
     return node->val;
 }
 
+// CODE_REVIEW: node destroy function is missing.
+
+// CODE_REVIEW: move struct definitions to beginning
+// CODE_REVIEW: two typedefs not required
 typedef struct dbllist_ {
     Node* head;
     Node* tail;
@@ -35,15 +47,18 @@ dbllist* dbllist_create() {
 }
 
 int dbllist_size(dbllist* list) {
+    // CODE_REVIEW: what happens if list is null? check it and handle properly
     return list->size;
 }
 
+// CODE_REVIEW: name should reflect what this function is doing
 void dbllist_insert(dbllist* list, int data) {
     Node* node = node_create(data);
     node->val = data;
     dbllist_insert_node(list, node);
 }
 
+// CODE_REVIEW: name should reflect what this function is doing
 void dbllist_insert_node(dbllist* list, Node* node) {
     Node* prev = list->tail->prev;
     prev->next = node;
@@ -53,6 +68,7 @@ void dbllist_insert_node(dbllist* list, Node* node) {
     list->size++;
 }
 
+// CODE_REVIEW: returning Node* may not be needed.
 Node* dbllist_remove_head(dbllist* list) {
     if(list->size == 0) {
         return NULL;
@@ -62,6 +78,7 @@ Node* dbllist_remove_head(dbllist* list) {
     list->head->next = next;
     next->prev = list->head;
     list->size--;
+    // CODE_REVIEW: free memory for head.
     return head;
 }
 
