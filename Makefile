@@ -8,7 +8,7 @@ main.o: main.c
 	gcc -c main.c
 
 clock.o: clock/clock.c
-	gcc -Wno-int-conversion -c clock/clock.c
+	gcc -c clock/clock.c
 
 dbllist.o: source_files/dbllist.c
 	gcc -c source_files/dbllist.c -fpic
