@@ -2,8 +2,7 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "lru.h"
-// CODE_REVIEW: change includes in this pattern. dbl/dbllist.h & hashmap/hashmap.h
+#include "include/lru.h"
 #include "hashmap/hashmap.h"
 #include "dbllist/dbllist.h"
 

@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "./lru/lru.h"
-#include "./clock/clock.h"
+#include "include/lru.h"
+#include "include/clock.h"
 
 int main() {
 

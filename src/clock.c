@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "hashmap/hashmap.h"
-#include "clock.h"
+#include "include/clock.h"
 
 struct clock_node_ {
     int data;
