@@ -50,10 +50,10 @@
     - Prints the buffer, total references, number of hits and misses and hit ratio.
     - returns `void`.
   - `<cache_name>_print_buffer(<cache_name>_cache* cache)`
-    - Prints the buffer.
+    - Prints the buffer at that current state.
     - returns `void`.
   - `<cache_name>_put_array(<cache_name>_cache* cache, int pages[], int size)`
-    - Performs LRU operation for each data item from `pages` in a linear fashion.
+    - Performs the operation for each data item from `pages` in a linear fashion.
     - returns `void`.
   - `<cache_name>_destroy(<cache_name>_cache* cache)`
     - free the memory allocated by the `cache`.
