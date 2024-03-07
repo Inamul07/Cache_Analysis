@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../header_files/hashmap.h"
+#include "hashmap/hashmap.h"
 #include "clock.h"
 
 struct clock_node_ {

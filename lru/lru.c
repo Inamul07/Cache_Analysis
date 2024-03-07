@@ -4,8 +4,8 @@
 
 #include "lru.h"
 // CODE_REVIEW: change includes in this pattern. dbl/dbllist.h & hashmap/hashmap.h
-#include "../header_files/dbllist.h"
-#include "../header_files/hashmap.h"
+#include "hashmap/hashmap.h"
+#include "dbllist/dbllist.h"
 
 // CODE_REVIEW:  handle null arguments
 

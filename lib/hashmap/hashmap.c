@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "../header_files/hashmap.h"
+#include "hashmap.h"
 
 
 #define GROW_AT   0.60 /* 60% */

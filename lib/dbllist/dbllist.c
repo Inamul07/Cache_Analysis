@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../header_files/dbllist.h"
+#include "dbllist.h"
 
 // CODE_REVIEW: add comments on how list will look before and after an operation
 // CODE_REVIEW: handle null pointers
