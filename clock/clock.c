@@ -59,7 +59,7 @@ void clock_access(clock_cache* cache, int data) {
         }
         hmap_insert(cache->map, data, copyOf(cache->currIdx));
         cache->cache[cache->currIdx]->data = data;
-        cache->cache[cache->currIdx]->r_bit = 0;
+        cache->cache[cache->currIdx]->r_bit = 1;
         cache->currSize++;
         cache->currIdx++;
         cache->currIdx %= cache->capacity;
