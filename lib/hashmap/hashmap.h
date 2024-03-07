@@ -13,7 +13,7 @@
 extern "C" {
 #endif  // __cplusplus
 
-struct hashmap;
+typedef struct hashmap hashmap;
 
 
 

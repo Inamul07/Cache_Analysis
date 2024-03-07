@@ -1,7 +1,7 @@
 all: final
 
 final: main.o lru.o clock.o
-	gcc -o main main.o lru.o clock.o -L./lib/ -ldslibrary -Wl,-rpath,./lib/
+	gcc -o main main.o lru.o clock.o -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/
 	./main
 
 main.o: main.c
@@ -19,9 +19,13 @@ lib/dbllist.o: lib/dbllist/dbllist.c
 lib/hashmap.o: lib/hashmap/hashmap.c
 	gcc -o lib/hashmap.o -c lib/hashmap/hashmap.c -fpic
 
-makelib: lib/dbllist.o lib/hashmap.o
-	gcc lib/dbllist.o lib/hashmap.o -shared -o lib/libdslibrary.so
-	rm lib/dbllist.o lib/hashmap.o
+lib/hmap.o: lib/hashmap/hmap.c
+	gcc -o lib/hmap.o -c lib/hashmap/hmap.c -fpic
+
+makelib: lib/dbllist.o lib/hashmap.o lib/hmap.o
+	gcc lib/dbllist.o -shared -o lib/libdbllist.so
+	gcc lib/hashmap.o lib/hmap.o -shared -o lib/libhashmap.so
+	rm lib/dbllist.o lib/hashmap.o lib/hmap.o
 
 clean: 
 	rm -f main.o lru.o clock.o main

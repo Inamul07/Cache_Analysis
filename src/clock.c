@@ -20,6 +20,10 @@ struct clock_cache_ {
 };
 
 clock_cache* clock_init(int capacity) {
+    if(capacity <= 0) {
+        printf("Capacity must be greater than 0\n");
+        return NULL;
+    }
     clock_cache* cache = (clock_cache*) malloc(sizeof(clock_cache));
     cache->cache = (clock_node**) malloc(capacity * sizeof(clock_node*));
     for(int i = 0; i < capacity; i++) {
@@ -41,6 +45,10 @@ int* copyOf(int currIdx) {
 }
 
 void clock_access(clock_cache* cache, int data) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     if(hmap_contains(cache->map, data)) {
         // hit
         int* page_idx = hmap_get(cache->map, data);
@@ -68,10 +76,18 @@ void clock_access(clock_cache* cache, int data) {
 }
 
 void print_clock_node(clock_node* node) {
+    if(node == NULL) {
+        printf("Node is NULL");
+        return;
+    }
     printf("(%d, %d)", node->data, node->r_bit);
 }
 
 void clock_print_buffer(clock_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     printf("[");
     int idx = cache->currIdx % cache->currSize;
     for(int i = 0; i < cache->currSize; i++) {
@@ -86,6 +102,10 @@ void clock_print_buffer(clock_cache* cache) {
 }
 
 void clock_analysis(clock_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     printf("Buffer = ");
     clock_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
@@ -95,12 +115,20 @@ void clock_analysis(clock_cache* cache) {
 }
 
 void clock_put_array(clock_cache* cache, int* pages, int size) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     for(int i = 0; i < size; i++) {
         clock_access(cache, pages[i]);
     }
 }
 
 void clock_destroy(clock_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     for(int i = 0; i < cache->currSize; i++) {
         free(cache->cache[i]);
     }

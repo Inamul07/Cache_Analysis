@@ -1,40 +1,76 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+
 #include "dbllist.h"
 
-// CODE_REVIEW: add comments on how list will look before and after an operation
-// CODE_REVIEW: handle null pointers
+/*
+    dbllist_create()
+    -1 <-> -1
 
-// CODE_REVIEW: two typedefs not required
-typedef struct node {
+    dbblist_insert_at_tail(10)
+    -1 <-> 10 <-> -1
+
+    dbblist_insert_at_tail(20)
+    -1 <-> 10 <-> 20 <-> -1
+
+    dbllist_peek_head() -> returns 10
+
+    dbllist_peek_tail() -> returns 20
+
+    dbllist_remove_head()
+    -1 <-> 20 <-> -1
+
+    dbllist_insert(30)
+    -1 <-> 20 <-> 30 <-> -1
+
+    dbllist_move_node_to_tail( [20] ) // 20 is a node
+    -1 <-> 30 <-> 20 <-> -1
+
+*/
+
+struct linked_list_node {
     int val;
-    struct node* prev;
-    struct node* next;
-} Node;
+    Node* prev;
+    Node* next;
+};
 
-// CODE_REVIEW: set prev, next as NULL -- Why is default value setting to NULL.
-// CODE_REVIEW: node create can have params for prev and next as well.
-Node* node_create(int data) {
-    Node* node = (Node*) malloc(sizeof(node));
-    node->val = data;
-    return node;
-}
-
-// CODE_REVIEW: name it properly
-int node_val(Node* node) {
-    // CODE_REVIEW: what happens if node is null? check it and handle properly
-    return node->val;
-}
-
-// CODE_REVIEW: node destroy function is missing.
-
-// CODE_REVIEW: move struct definitions to beginning
-// CODE_REVIEW: two typedefs not required
-typedef struct dbllist_ {
+struct dbllist_ {
     Node* head;
     Node* tail;
     int size;
-} dbllist;
+};
+
+Node* node_create(int data) {
+    Node* node = malloc(sizeof(Node));
+    node->val = data;
+    node->prev = NULL;
+    node->next = NULL;
+    return node;
+}
+
+Node* node_create_with_ptrs(int data, Node* prev, Node* next) {
+    Node* node = node_create(data);
+    node->prev = prev;
+    node->next = next;
+    return node;
+}
+
+int node_val(Node* node) {
+    if(node == NULL) {
+        printf("Node is NULL\n");
+        exit(EXIT_FAILURE);
+    }
+    return node->val;
+}
+
+void node_destroy(Node* node) {
+    if(node == NULL) {
+        printf("Node cannot be null\n");
+        return;
+    }
+    free(node);
+}
 
 dbllist* dbllist_create() {
     dbllist* list = (dbllist*) malloc(sizeof(dbllist));
@@ -47,19 +83,28 @@ dbllist* dbllist_create() {
 }
 
 int dbllist_size(dbllist* list) {
-    // CODE_REVIEW: what happens if list is null? check it and handle properly
+    if(list == NULL) {
+        printf("List is NULL\n");
+        exit(EXIT_FAILURE);
+    }
     return list->size;
 }
 
-// CODE_REVIEW: name should reflect what this function is doing
-void dbllist_insert(dbllist* list, int data) {
+void dbllist_insert_at_tail(dbllist* list, int data) {
+    if(list == NULL) {
+        printf("List cannot be NULL\n");
+        return;
+    }
     Node* node = node_create(data);
     node->val = data;
-    dbllist_insert_node(list, node);
+    dbllist_insert_node_at_tail(list, node);
 }
 
-// CODE_REVIEW: name should reflect what this function is doing
-void dbllist_insert_node(dbllist* list, Node* node) {
+void dbllist_insert_node_at_tail(dbllist* list, Node* node) {
+    if(list == NULL) {
+        printf("%s cannot be NULL\n", !list && !node? "List & Node": (!list? "List": "Node"));
+        return;
+    }
     Node* prev = list->tail->prev;
     prev->next = node;
     node->prev = prev;
@@ -68,33 +113,67 @@ void dbllist_insert_node(dbllist* list, Node* node) {
     list->size++;
 }
 
-// CODE_REVIEW: returning Node* may not be needed.
-Node* dbllist_remove_head(dbllist* list) {
-    if(list->size == 0) {
-        return NULL;
+int dbllist_peek_head(dbllist* list) {
+    if(list == NULL || list->size == 0) {
+        printf(!list? "List cannot be NULL\n": "List is Empty\n");
+        exit(EXIT_FAILURE);
+    }
+    return list->head->next->val;
+}
+
+int dbllist_peek_tail(dbllist* list) {
+    if(list == NULL || list->size == 0) {
+        printf(!list? "List cannot be NULL\n": "List is Empty\n");
+        exit(EXIT_FAILURE);
+    }
+    return list->tail->prev->val;
+}
+
+int dbllist_remove_head(dbllist* list) {
+    if(list == NULL || list->size == 0) {
+        printf(!list? "List cannot be NULL\n": "List is Empty\n");
+        return 0;
     }
     Node* head = list->head->next;
     Node* next = head->next;
     list->head->next = next;
     next->prev = list->head;
     list->size--;
-    // CODE_REVIEW: free memory for head.
-    return head;
+    free(head);
+    return 1;
 }
 
-Node* dbllist_remove_node(dbllist* list, Node* node) {
-    if(list->size == 0) {
-        return NULL;
+void dbllist_move_node_to_tail(dbllist* list, Node* node) {
+    if(list == NULL || node == NULL) {
+        printf("%s cannot be NULL\n", !list && !node? "List & Node": (!list? "List": "Node"));
+        return;
     }
     Node* prev = node->prev;
     Node* next = node->next;
     prev->next = next;
     next->prev = prev;
     list->size--;
-    return node;
+    dbllist_insert_node_at_tail(list, node);
+}
+
+int dbllist_remove_node(dbllist* list, Node* node) {
+    if(list == NULL || node == NULL) {
+        printf("%s cannot be NULL\n", !list && !node? "List & Node": (!list? "List": "Node"));
+        return 0;
+    }
+    Node* prev = node->prev;
+    Node* next = node->next;
+    prev->next = next;
+    next->prev = prev;
+    list->size--;
+    return 1;
 }
 
 void dbllist_print(dbllist* list) {
+    if(list == NULL) {
+        printf("List cannot be NULL\n");
+        return;
+    }
     Node* trav = list->head;
     printf("[");
     while(trav->next != list->tail) {
@@ -108,6 +187,10 @@ void dbllist_print(dbllist* list) {
 }
 
 void dbllist_destroy(dbllist* list) {
+    if(list == NULL) {
+        printf("List cannot be NULL\n");
+        return;
+    }
     Node* head = list->head;
     while(head != NULL) {
         Node* next = head->next;

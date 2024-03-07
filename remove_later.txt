@@ -1,7 +1,0 @@
-- add gitignore file
-- change header_files to include
-- change source_files to src
-- move external libraries (even your dbl list) to seperate folder lib
-- make seperate shared libraries for linked list and hashmap
-- understand shared libraries vs static libraries better
-- Understand Make.
