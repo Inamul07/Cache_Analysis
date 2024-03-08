@@ -4,6 +4,7 @@
 
 #include "dbllist.h"
 
+// CODE_REVIEW: move these examples to top of relevant functions
 /*
     dbllist_create()
     -1 <-> -1
@@ -49,6 +50,7 @@ Node* node_create(int data) {
     return node;
 }
 
+// CODE_REVIEW: Update name
 Node* node_create_with_ptrs(int data, Node* prev, Node* next) {
     Node* node = node_create(data);
     node->prev = prev;
@@ -59,6 +61,7 @@ Node* node_create_with_ptrs(int data, Node* prev, Node* next) {
 int node_val(Node* node) {
     if(node == NULL) {
         printf("Node is NULL\n");
+        // CODE_REVIEW: don't exit
         exit(EXIT_FAILURE);
     }
     return node->val;
@@ -113,6 +116,7 @@ void dbllist_insert_node_at_tail(dbllist* list, Node* node) {
     list->size++;
 }
 
+// CODE_REVIEW: change name
 int dbllist_peek_head(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
@@ -121,6 +125,7 @@ int dbllist_peek_head(dbllist* list) {
     return list->head->next->val;
 }
 
+// CODE_REVIEW: change name
 int dbllist_peek_tail(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
@@ -129,6 +134,8 @@ int dbllist_peek_tail(dbllist* list) {
     return list->tail->prev->val;
 }
 
+
+// CODE_REVIEW: introduce booleans
 int dbllist_remove_head(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");

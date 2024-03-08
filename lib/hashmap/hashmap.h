@@ -13,6 +13,7 @@
 extern "C" {
 #endif  // __cplusplus
 
+// Move your declarations into your own header file
 typedef struct hashmap hashmap;
 
 

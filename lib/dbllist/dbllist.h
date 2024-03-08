@@ -4,6 +4,7 @@
 typedef struct linked_list_node Node;
 typedef struct dbllist_ dbllist;
 
+// CODE_REVIEW: add parameter names in both .c and .h files
 Node* node_create(int);
 int node_val(Node*);
 Node* node_create_with_ptrs(int, Node*, Node*);

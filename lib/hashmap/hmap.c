@@ -13,6 +13,7 @@ struct pair {
 
 uint64_t hash_func(const void *item, uint64_t seed0, uint64_t seed1) {
     const struct pair *p = item;
+    // CODE_REVIEW: don't allocate memory here
     int* key = (int*) malloc(sizeof(int));
     key[0] = p->key;
     return hashmap_sip(key, sizeof(p->key), seed0, seed1);
@@ -38,6 +39,7 @@ void hmap_insert(hashmap *map, int key, void* node) {
 }
 
 void* hmap_get(hashmap* map, int key) {
+    // CODE_REVIEW: no need of pair struct
     const struct pair *p;
     p = hashmap_get(map, &(struct pair){ .key=key });
     if(p == NULL) {
@@ -47,6 +49,7 @@ void* hmap_get(hashmap* map, int key) {
 }
 
 void* hmap_remove(hashmap* map, int key) {
+    // CODE_REVIEW: no need of pair struct
     const struct pair* p;
     p = hashmap_delete(map, &(struct pair) {.key=key});
     if(p == NULL) {
@@ -56,6 +59,7 @@ void* hmap_remove(hashmap* map, int key) {
 }
 
 int hmap_contains(hashmap* map, int key) {
+    // CODE_REVIEW: no need of pair struct
     const struct pair *p;
     p = hashmap_get(map, &(struct pair){ .key=key });
     if(p == NULL) {
