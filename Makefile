@@ -1,17 +1,20 @@
 all: final
 
-final: main.o lru.o clock.o
-	gcc -o main main.o lru.o clock.o -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/
+final: main.o lru.o clock.o two_queue.o
+	gcc -o main main.o lru.o clock.o two_queue.o -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/
 	./main
 
 main.o: main.c
-	gcc -c main.c
+	gcc -c -I./include/ main.c
 
 lru.o: src/lru.c
 	gcc -c -I./lib/ -I./include/ src/lru.c
 
 clock.o: src/clock.c
 	gcc -c -I./lib/ -I./include/ src/clock.c
+
+two_queue.o: src/two_queue.c
+	gcc -c -I./lib/ -I./include/ src/two_queue.c
 
 lib/dbllist.o: lib/dbllist/dbllist.c
 	gcc -o lib/dbllist.o -c lib/dbllist/dbllist.c -fpic
@@ -28,4 +31,4 @@ makelib: lib/dbllist.o lib/hashmap.o lib/myhashmap.o
 	rm lib/dbllist.o lib/hashmap.o lib/myhashmap.o
 
 clean: 
-	rm -f main.o lru.o clock.o main
+	rm -f main.o lru.o clock.o two_queue.o main
