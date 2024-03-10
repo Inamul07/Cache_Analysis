@@ -18,6 +18,10 @@ struct two_queue {
 };
 
 two_queue_cache* two_queue_init(int amSize, int a1inSize, int a1outSize) {
+    if(amSize <= 0 || a1inSize <= 0 || a1outSize <= 0) {
+        printf("Capacity must be greater than 0\n");
+        return NULL;
+    }
     two_queue_cache* cache = malloc(sizeof(two_queue_cache));
     cache->am = dbllist_create();
     cache->a1in = dbllist_create();
@@ -46,6 +50,10 @@ void create_and_insert_node_at_tail(int data, dbllist* list, hashmap* map) {
 }
 
 void two_queue_access(two_queue_cache* cache, int page) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     if(hmap_contains(cache->amMap, page)) { // page in Am (hit)
         Node* node = hmap_get(cache->amMap, page);
         dbllist_move_node_to_tail(cache->am, node);
@@ -85,12 +93,20 @@ void two_queue_access(two_queue_cache* cache, int page) {
 }
 
 void two_queue_put_array(two_queue_cache* cache, int* pages, int size) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     for(int i = 0; i < size; i++) {
         two_queue_access(cache, pages[i]);
     }
 }
 
 void two_queue_print_buffer(two_queue_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     printf("Am => ");
     dbllist_print(cache->am);
     printf("A1In => ");
@@ -100,6 +116,10 @@ void two_queue_print_buffer(two_queue_cache* cache) {
 }
 
 void two_queue_analysis(two_queue_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     printf("Buffer: \n");
     two_queue_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
@@ -109,6 +129,10 @@ void two_queue_analysis(two_queue_cache* cache) {
 }
 
 void two_queue_destroy(two_queue_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return;
+    }
     dbllist_destroy(cache->am);
     dbllist_destroy(cache->a1in);
     dbllist_destroy(cache->a1out);
