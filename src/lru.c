@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "include/lru.h"
-#include "hashmap/hashmap.h"
+#include "lru.h"
+#include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
 
 struct lru_cache_ {
@@ -38,7 +38,7 @@ void lru_access(lru_cache* cache, int data) {
         cache->hitCount++;
     } else { // Page not in cache
         if(cache->currSize == cache->capacity) {
-            int node_val = dbllist_peek_head(cache->list);
+            int node_val = dbllist_peek_head_val(cache->list);
             dbllist_remove_head(cache->list);
             hmap_remove(cache->map, node_val);
             cache->currSize--;

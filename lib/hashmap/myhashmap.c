@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "hashmap.h"
+#include "myhashmap.h"
 
 struct pair {
     int key;

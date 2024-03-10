@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "hashmap/hashmap.h"
-#include "include/clock.h"
+#include "hashmap/myhashmap.h"
+#include "clock.h"
 
 struct clock_node_ {
     int data;

@@ -13,10 +13,7 @@
 extern "C" {
 #endif  // __cplusplus
 
-// Move your declarations into your own header file
-typedef struct hashmap hashmap;
-
-
+struct hashmap;
 
 struct hashmap *hashmap_new(size_t elsize, size_t cap, uint64_t seed0, 
     uint64_t seed1, 
@@ -53,18 +50,6 @@ const void *hashmap_delete_with_hash(struct hashmap *map, const void *key, uint6
 const void *hashmap_set_with_hash(struct hashmap *map, const void *item, uint64_t hash);
 void hashmap_set_grow_by_power(struct hashmap *map, size_t power);
 void hashmap_set_load_factor(struct hashmap *map, double load_factor);
-
-
-struct pair;
-
-
-struct hashmap* hmap_create();
-void hmap_insert(struct hashmap*, int, void*);
-void* hmap_get(struct hashmap*, int);
-void* hmap_remove(struct hashmap*, int);
-int hmap_contains(struct hashmap*, int);
-void hmap_free(struct hashmap*);
-
 
 // DEPRECATED: use `hashmap_new_with_allocator`
 void hashmap_set_allocator(void *(*malloc)(size_t), void (*free)(void*));

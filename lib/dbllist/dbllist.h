@@ -17,8 +17,8 @@ void dbllist_insert_node_at_tail(dbllist*, Node*);
 void dbllist_move_node_to_tail(dbllist*, Node*);
 int dbllist_remove_head(dbllist*);
 int dbllist_remove_node(dbllist*, Node*);
-int dbllist_peek_head(dbllist*);
-int dbllist_peek_tail(dbllist*);
+int dbllist_peek_head_val(dbllist*);
+int dbllist_peek_tail_val(dbllist*);
 void dbllist_print(dbllist*);
 void dbllist_destroy(dbllist*);
 

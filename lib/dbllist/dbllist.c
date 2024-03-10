@@ -117,7 +117,7 @@ void dbllist_insert_node_at_tail(dbllist* list, Node* node) {
 }
 
 // CODE_REVIEW: change name
-int dbllist_peek_head(dbllist* list) {
+int dbllist_peek_head_val(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
         exit(EXIT_FAILURE);
@@ -126,7 +126,7 @@ int dbllist_peek_head(dbllist* list) {
 }
 
 // CODE_REVIEW: change name
-int dbllist_peek_tail(dbllist* list) {
+int dbllist_peek_tail_val(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
         exit(EXIT_FAILURE);
