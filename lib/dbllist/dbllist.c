@@ -6,6 +6,8 @@
 
 #include "dbllist.h"
 
+#define NODE_DEFAULT INT_MIN
+
 // CODE_REVIEW: improve comments
 
 struct linked_list_node {
@@ -33,8 +35,7 @@ Node* node_create(int data, Node* prev, Node* next) {
 int node_val(Node* node) {
     if(node == NULL) {
         printf("Node is NULL\n");
-        // CODE_REVIEW: Make a macro for node default value....
-        return INT_MIN;
+        return NODE_DEFAULT;
     }
     return node->val;
 }
@@ -52,8 +53,8 @@ void node_destroy(Node* node) {
 dbllist* dbllist_create() {
     dbllist* list = (dbllist*) malloc(sizeof(dbllist));
     // CODE_REVIEW: use default node value....
-    list->head = node_create(-1, NULL, NULL);
-    list->tail = node_create(-1, NULL, NULL);
+    list->head = node_create(NODE_DEFAULT, NULL, NULL);
+    list->tail = node_create(NODE_DEFAULT, NULL, NULL);
     list->head->next = list->tail;
     list->tail->prev = list->head;
     list->size = 0;
@@ -69,8 +70,7 @@ dbllist* dbllist_create() {
 int dbllist_size(dbllist* list) {
     if(list == NULL) {
         printf("List is NULL\n");
-        // CODE_REVIEW: Make a macro for node default value....
-        return INT_MIN;
+        return NODE_DEFAULT;
     }
     return list->size;
 }
@@ -118,7 +118,7 @@ void dbllist_insert_node_at_tail(dbllist* list, Node* node) {
 int dbllist_peek_head_val(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
-        exit(EXIT_FAILURE);
+        return NODE_DEFAULT;
     }
     return list->head->next->val;
 }
@@ -131,7 +131,7 @@ int dbllist_peek_head_val(dbllist* list) {
 int dbllist_peek_tail_val(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
-        exit(EXIT_FAILURE);
+        return NODE_DEFAULT;
     }
     return list->tail->prev->val;
 }

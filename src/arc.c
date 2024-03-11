@@ -114,7 +114,11 @@ void arc_access(arc_cache* cache, int page) {
 
         cache->missCount++;
     } else { // Page not in Cache (miss)
-        int t1Size = dbllist_size(cache->t1), t2Size = dbllist_size(cache->t2), b1Size = dbllist_size(cache->b1), b2Size = dbllist_size(cache->b2);
+        int t1Size = dbllist_size(cache->t1);
+        int t2Size = dbllist_size(cache->t2);
+        int b1Size = dbllist_size(cache->b1);
+        int b2Size = dbllist_size(cache->b2);
+        int totalCount = t1Size + t2Size + b1Size + b2Size;
         if(t1Size + b1Size == cache->capacity) {
             if(t1Size < cache->capacity) {
                 util_peek_head_value_and_remove(cache->b1, cache->b1Map);
@@ -123,8 +127,8 @@ void arc_access(arc_cache* cache, int page) {
                 util_peek_head_value_and_remove(cache->t1, cache->t1Map);
             }
         } else {
-            if(t1Size + t2Size + b1Size + b2Size >= cache->capacity) {
-                if(t1Size + t2Size + b1Size + b2Size == 2 * cache->capacity) {
+            if(totalCount >= cache->capacity) {
+                if(totalCount == 2 * cache->capacity) {
                     util_peek_head_value_and_remove(cache->b2, cache->b2Map);
                 }
                 perform_replace(cache, page);

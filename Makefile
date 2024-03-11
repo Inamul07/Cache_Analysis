@@ -32,7 +32,7 @@ lib/myhashmap.o: lib/hashmap/myhashmap.c
 	gcc -o lib/myhashmap.o -c lib/hashmap/myhashmap.c -fpic
 
 makelib: lib/dbllist.o lib/hashmap.o lib/myhashmap.o
-	gcc lib/dbllist.o -shared -o lib/libdbllist.o
+	gcc lib/dbllist.o -shared -o lib/libdbllist.so
 	gcc lib/hashmap.o lib/myhashmap.o -shared -o lib/libhashmap.so
 	rm lib/dbllist.o lib/hashmap.o lib/myhashmap.o
 

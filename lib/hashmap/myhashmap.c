@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 #include "hashmap.h"
 #include "myhashmap.h"
@@ -52,14 +51,13 @@ void* hmap_get(hashmap* map, int key) {
 }
 
 // Removes the key and its corresponding value from the map
-void* hmap_remove(hashmap* map, int key) {
+bool hmap_remove(hashmap* map, int key) {
     const struct pair* p;
-    // CODE_REVIEW: this memory will be reused by the hashmap library so make sure it doesn't cause any issue.
     p = hashmap_delete(map, &key);
     if(p == NULL) {
-        return NULL;
+        return false;
     }
-    return p->value;
+    return true;
 }
 
 // Checks if the map contains the given key

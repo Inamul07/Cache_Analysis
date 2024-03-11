@@ -39,7 +39,7 @@ clock_cache* clock_init(int capacity) {
     return cache;
 }
 
-int* copyOf(int currIdx) {
+int* copy_of(int currIdx) {
     int* idx = malloc(sizeof(int));
     memcpy(idx, &currIdx, sizeof(int));
     return idx;
@@ -67,7 +67,7 @@ void clock_access(clock_cache* cache, int data) {
             hmap_remove(cache->map, cache->cache[cache->currIdx]->data);
             cache->currSize--;
         }
-        hmap_insert(cache->map, data, copyOf(cache->currIdx));
+        hmap_insert(cache->map, data, copy_of(cache->currIdx));
         cache->cache[cache->currIdx]->data = data;
         cache->cache[cache->currIdx]->r_bit = 1;
         cache->currSize++;
