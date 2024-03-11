@@ -6,6 +6,8 @@
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
 
+// CODE_REVIEW: Write comments, name function properly & remove redundant functions
+
 struct two_queue {
     dbllist* am;
     dbllist* a1in;
