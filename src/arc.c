@@ -20,6 +20,7 @@ struct arc {
     int hitCount, missCount;
 };
 
+// Initializes the ARC cache
 arc_cache* arc_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -48,6 +49,8 @@ int min(int a, int b) {
     return (a < b? a: b);
 }
 
+// Helper Function:
+// Removes the head Node of a list and also removes the node from the map and returns the value of that node
 int peek_val_and_remove_head(dbllist* list, hashmap* map) {
     int headVal = dbllist_peek_head_val(list);
     dbllist_remove_head(list);
@@ -55,6 +58,8 @@ int peek_val_and_remove_head(dbllist* list, hashmap* map) {
     return headVal;
 }
 
+// Helper Function:
+// Creates a Node with the given data and inserts it to the tail of the list and also to the map
 void insert_value_at_tail(int data, dbllist* list, hashmap* map) {
     Node* node = node_create(data);
     dbllist_insert_node_at_tail(list, node);
@@ -74,12 +79,15 @@ void perform_replace(arc_cache* cache, int page) {
     }
 }
 
+// Helper Function:
+// Removes a node, given the data, from the list and the map
 void remove_node(int data, dbllist* list, hashmap* map) {
     Node* node = hmap_get(map, data);
     dbllist_remove_node(list, node);
     hmap_remove(map, data);
 }
 
+// Performs ARC Cache operation on the cache with the given page
 void arc_access(arc_cache* cache, int page) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -149,6 +157,7 @@ void arc_access(arc_cache* cache, int page) {
     }
 }
 
+// Prints the ARC buffer at the current state
 void arc_print_buffer(arc_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -165,6 +174,7 @@ void arc_print_buffer(arc_cache* cache) {
     printf("P = %d\n", cache->p);
 }
 
+// Prints the reference, hit and miss count
 void arc_analysis(arc_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -178,6 +188,7 @@ void arc_analysis(arc_cache* cache) {
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
+// Performs ARC cache operation for each element, from the array, in a linear fashion
 void arc_put_array(arc_cache* cache, int* pages, int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -188,6 +199,7 @@ void arc_put_array(arc_cache* cache, int* pages, int size) {
     }
 }
 
+// Frees the memory occupied by the cache
 void arc_destroy(arc_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
