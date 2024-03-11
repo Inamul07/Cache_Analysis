@@ -1,3 +1,4 @@
+// CODE_REVIEW: write comments
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -53,6 +54,7 @@ void* hmap_get(hashmap* map, int key) {
 // Removes the key and its corresponding value from the map
 void* hmap_remove(hashmap* map, int key) {
     const struct pair* p;
+    // CODE_REVIEW: this memory will be reused by the hashmap library so make sure it doesn't cause any issue.
     p = hashmap_delete(map, &key);
     if(p == NULL) {
         return NULL;

@@ -1,3 +1,4 @@
+// CODE_REVIEW: Explain about this wrapper...
 #ifndef MYHASHMAP_H
 #define MYHASHMAP_H
 

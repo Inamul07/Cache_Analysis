@@ -6,6 +6,8 @@
 
 #include "dbllist.h"
 
+// CODE_REVIEW: improve comments
+
 struct linked_list_node {
     int val;
     Node* prev;
@@ -31,6 +33,7 @@ Node* node_create(int data, Node* prev, Node* next) {
 int node_val(Node* node) {
     if(node == NULL) {
         printf("Node is NULL\n");
+        // CODE_REVIEW: Make a macro for node default value....
         return INT_MIN;
     }
     return node->val;
@@ -48,6 +51,7 @@ void node_destroy(Node* node) {
 // Creates and Initializes a Doubly Linked List
 dbllist* dbllist_create() {
     dbllist* list = (dbllist*) malloc(sizeof(dbllist));
+    // CODE_REVIEW: use default node value....
     list->head = node_create(-1, NULL, NULL);
     list->tail = node_create(-1, NULL, NULL);
     list->head->next = list->tail;
@@ -57,6 +61,7 @@ dbllist* dbllist_create() {
 }
 
 /*
+    // CODE_REVIEW: Mention your dbl logic with head and tail with default values
     List = [-1 <-> 10 <-> 20 <-> -1]
     Output = 2
 */
@@ -64,6 +69,7 @@ dbllist* dbllist_create() {
 int dbllist_size(dbllist* list) {
     if(list == NULL) {
         printf("List is NULL\n");
+        // CODE_REVIEW: Make a macro for node default value....
         return INT_MIN;
     }
     return list->size;
