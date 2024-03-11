@@ -13,6 +13,7 @@ struct lru_cache_ {
     int hitCount, missCount;
 };
 
+// Initializes the LRU cache
 lru_cache* lru_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -27,6 +28,7 @@ lru_cache* lru_init(int capacity) {
     cache->missCount = 0;
 }
 
+// Performs LRU cache operation on the cache with the given page
 void lru_access(lru_cache* cache, int data) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -43,7 +45,7 @@ void lru_access(lru_cache* cache, int data) {
             hmap_remove(cache->map, node_val);
             cache->currSize--;
         }
-        Node* node = node_create(data);
+        Node* node = node_create(data, NULL, NULL);
         dbllist_insert_node_at_tail(cache->list, node);
         hmap_insert(cache->map, data, node);
         cache->currSize++;
@@ -51,6 +53,7 @@ void lru_access(lru_cache* cache, int data) {
     }
 }
 
+// Prints the LRU buffer at the current state
 void lru_print_buffer(lru_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -59,6 +62,7 @@ void lru_print_buffer(lru_cache* cache) {
     dbllist_print(cache->list);
 }
 
+// Prints the reference, hit and miss count
 void lru_analysis(lru_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -72,6 +76,7 @@ void lru_analysis(lru_cache* cache) {
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
+// Performs LRU cache operation for each element, from the array, in a linear fashion
 void lru_put_array(lru_cache* cache, int* pages, int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -82,6 +87,7 @@ void lru_put_array(lru_cache* cache, int* pages, int size) {
     }
 }
 
+// Frees the memory occupied by the cache
 void lru_destroy(lru_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");

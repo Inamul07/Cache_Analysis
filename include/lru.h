@@ -1,3 +1,4 @@
+// CODE_REVIEW: explain what this library does breifly
 #ifndef LRU_H_
 #define LRU_H_
 
