@@ -3,6 +3,8 @@
 ### In this Repository
 - Least Recently Used (LRU)
 - Clock Page Replacement
+- 2Q
+- Adaptive Replacement Cache (ARC)
 
 ### Objectives
 - This repository aims to analyse different page replacement algorithms.
@@ -11,6 +13,9 @@
 ### References
 - [Paging Experiment with the Multics System](https://multicians.org/paging-experiment.pdf)
 - [Least Recently Used](https://redis.com/glossary/lru-cache/)
+- [2Q - A Low Overhead High Performance Buffer Management Replacement Algorithm](https://www.vldb.org/conf/1994/P439.PDF)
+- [A Cache Algorithm for Disk-backed Databases](https://arpitbhayani.me/blogs/2q-cache/)
+- [ARC: A Self-tuning, Low Overhead Replacement Cache](https://www2.cs.uh.edu/~paris/7360/PAPERS03/arcfast.pdf)
 
 ### How to use this project
 - Clone this Repository.
@@ -25,6 +30,13 @@
   ```
 
 ### Algorithm Methods
+  
+  | Algorithm | cache_name |
+  |----|----|
+  | Least Recently Used | lru |
+  | Clock Page Replacement | clock |
+  | Two Queue | two_queue |
+  | Adaptive Replacement Cache | arc|
 
   > Each algorithm contains a set of methods. <br />
   > To use a method, type the cache name followed by an underscore followed by method name. <br />
@@ -32,11 +44,6 @@
   > Example: `lru_init()`, `clock_init()`
 
   > Pass appropriate arguments to the methods. <br />
-  
-  | Algorithm | cache_name |
-  |----|----|
-  | Least Recently Used | lru |
-  | Clock Page Replacement | clock |
 
   #### Methods
   - `<cache_name>_init(int capacity)`
@@ -58,3 +65,8 @@
   - `<cache_name>_destroy(<cache_name>_cache* cache)`
     - free the memory allocated by the `cache`.
     - returns `void`.
+
+  > For 2Q Initialisation,
+  > ```C
+  > two_queue_init(int amSize, int a1inSize, int a1outSize);
+  > ```
