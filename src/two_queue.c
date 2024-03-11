@@ -51,7 +51,7 @@ int peek_val_and_remove_head(dbllist* list, hashmap* map) {
 // Helper Function:
 // Creates a Node with the given data and inserts it to the tail of the list and also to the map
 void create_and_insert_node_at_tail(int data, dbllist* list, hashmap* map) {
-    Node* node = node_create(data);
+    Node* node = node_create(data, NULL, NULL);
     dbllist_insert_node_at_tail(list, node);
     hmap_insert(map, data, node);
 }
