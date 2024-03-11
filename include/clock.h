@@ -1,3 +1,4 @@
+// CODE_REVIEW: explain what this library does breifly
 #ifndef CLOCK_H_
 #define CLOCK_H_
 
