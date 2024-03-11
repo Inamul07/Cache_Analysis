@@ -6,6 +6,7 @@
 #include "lru.h"
 #include "clock.h"
 #include "two_queue.h"
+#include "arc.h"
 
 int main() {
 
@@ -31,6 +32,13 @@ int main() {
     two_queue_put_array(cache3, pages, size);
     two_queue_analysis(cache3);
     two_queue_destroy(cache3);
+    printf("\n");
+
+    arc_cache* cache4 = arc_init(3);
+    printf("ARC:\n");
+    arc_put_array(cache4, pages, size);
+    arc_analysis(cache4);
+    arc_destroy(cache4);
     printf("\n");
 
     return 0;

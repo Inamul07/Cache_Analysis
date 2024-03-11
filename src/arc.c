@@ -3,6 +3,8 @@
 #include <stddef.h>
 
 #include "arc.h"
+#include "utils.h"
+
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
 
@@ -51,42 +53,17 @@ int min(int a, int b) {
     return (a < b? a: b);
 }
 
-// Helper Function:
-// Removes the head Node of a list and also removes the node from the map and returns the value of that node
-int peek_val_and_remove_head(dbllist* list, hashmap* map) {
-    int headVal = dbllist_peek_head_val(list);
-    dbllist_remove_head(list);
-    hmap_remove(map, headVal);
-    return headVal;
-}
-
-// Helper Function:
-// Creates a Node with the given data and inserts it to the tail of the list and also to the map
-void insert_value_at_tail(int data, dbllist* list, hashmap* map) {
-    Node* node = node_create(data);
-    dbllist_insert_node_at_tail(list, node);
-    hmap_insert(map, data, node);
-}
-
 void perform_replace(arc_cache* cache, int page) {
     int t1Size = dbllist_size(cache->t1);
     if(t1Size > 0 && (t1Size > cache->p || (hmap_contains(cache->b2Map, page) && t1Size == cache->p))) {
-        int headVal = peek_val_and_remove_head(cache->t1, cache->t1Map);
+        int headVal = util_peek_head_value_and_remove(cache->t1, cache->t1Map);
 
-        insert_value_at_tail(headVal, cache->b1, cache->b1Map);
+        util_insert_node_at_tail_and_map(headVal, cache->b1, cache->b1Map);
     } else {
-        int headVal = peek_val_and_remove_head(cache->t2, cache->t2Map);
+        int headVal = util_peek_head_value_and_remove(cache->t2, cache->t2Map);
 
-        insert_value_at_tail(headVal, cache->b2, cache->b2Map);
+        util_insert_node_at_tail_and_map(headVal, cache->b2, cache->b2Map);
     }
-}
-
-// Helper Function:
-// Removes a node, given the data, from the list and the map
-void remove_node(int data, dbllist* list, hashmap* map) {
-    Node* node = hmap_get(map, data);
-    dbllist_remove_node(list, node);
-    hmap_remove(map, data);
 }
 
 // Performs ARC Cache operation on the cache with the given page
@@ -96,9 +73,9 @@ void arc_access(arc_cache* cache, int page) {
         return;
     }
     if(hmap_contains(cache->t1Map, page)) { // Page in T1 (hit)
-        remove_node(page, cache->t1, cache->t1Map);
-
-        insert_value_at_tail(page, cache->t2, cache->t2Map);
+        util_remove_from_list_and_map(page, cache->t1, cache->t1Map);
+        
+        util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
 
         cache->hitCount++;
     } else if(hmap_contains(cache->t2Map, page)) { // Page in T2 (hit)
@@ -116,9 +93,9 @@ void arc_access(arc_cache* cache, int page) {
 
         perform_replace(cache, page);
 
-        remove_node(page, cache->b1, cache->b1Map);
+        util_remove_from_list_and_map(page, cache->b1, cache->b1Map);
 
-        insert_value_at_tail(page, cache->t2, cache->t2Map);
+        util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
 
         cache->missCount++;
     } else if(hmap_contains(cache->b2Map, page)) { // Page in B2 (miss)
@@ -131,29 +108,29 @@ void arc_access(arc_cache* cache, int page) {
 
         perform_replace(cache, page);
 
-        remove_node(page, cache->b2, cache->b2Map);
+        util_remove_from_list_and_map(page, cache->b2, cache->b2Map);
 
-        insert_value_at_tail(page, cache->t2, cache->t2Map);
+        util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
 
         cache->missCount++;
     } else { // Page not in Cache (miss)
         int t1Size = dbllist_size(cache->t1), t2Size = dbllist_size(cache->t2), b1Size = dbllist_size(cache->b1), b2Size = dbllist_size(cache->b2);
         if(t1Size + b1Size == cache->capacity) {
             if(t1Size < cache->capacity) {
-                peek_val_and_remove_head(cache->b1, cache->b1Map);
+                util_peek_head_value_and_remove(cache->b1, cache->b1Map);
                 perform_replace(cache, page);
             } else {
-                peek_val_and_remove_head(cache->t1, cache->t1Map);
+                util_peek_head_value_and_remove(cache->t1, cache->t1Map);
             }
         } else {
             if(t1Size + t2Size + b1Size + b2Size >= cache->capacity) {
                 if(t1Size + t2Size + b1Size + b2Size == 2 * cache->capacity) {
-                    peek_val_and_remove_head(cache->b2, cache->b2Map);
+                    util_peek_head_value_and_remove(cache->b2, cache->b2Map);
                 }
                 perform_replace(cache, page);
             }
         }
-        insert_value_at_tail(page, cache->t1, cache->t1Map);
+        util_insert_node_at_tail_and_map(page, cache->t1, cache->t1Map);
 
         cache->missCount++;
     }

@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "two_queue.h"
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
+
+#include "utils.h"
+#include "two_queue.h"
 
 // CODE_REVIEW: Write comments, name function properly & remove redundant functions
 
@@ -39,23 +41,6 @@ two_queue_cache* two_queue_init(int amSize, int a1inSize, int a1outSize) {
     cache->missCount = 0;
 }
 
-// Helper Function:
-// Removes the head Node of a list and also removes the node from the map and returns the value of that node
-int peek_val_and_remove_head(dbllist* list, hashmap* map) {
-    int headVal = dbllist_peek_head_val(list);
-    dbllist_remove_head(list);
-    hmap_remove(map, headVal);
-    return headVal;
-}
-
-// Helper Function:
-// Creates a Node with the given data and inserts it to the tail of the list and also to the map
-void create_and_insert_node_at_tail(int data, dbllist* list, hashmap* map) {
-    Node* node = node_create(data, NULL, NULL);
-    dbllist_insert_node_at_tail(list, node);
-    hmap_insert(map, data, node);
-}
-
 // Performs Two Queue Cache operation on the cache with the given page
 void two_queue_access(two_queue_cache* cache, int page) {
     if(cache == NULL) {
@@ -69,32 +54,30 @@ void two_queue_access(two_queue_cache* cache, int page) {
     } else if(hmap_contains(cache->a1inMap, page)) { // page in A1In (hit)
         cache->hitCount++;
     } else if(hmap_contains(cache->a1outMap, page)) { // page in A1Out (miss)
-        Node* node = hmap_get(cache->a1outMap, page);
-        dbllist_remove_node(cache->a1out, node);
-        hmap_remove(cache->a1outMap, page);
+        util_remove_from_list_and_map(page, cache->a1out, cache->a1outMap);
 
         int amCurrSize = dbllist_size(cache->am);
         if(amCurrSize == cache->amSize) {
-            int headVal = peek_val_and_remove_head(cache->am, cache->amMap);
+            util_peek_head_value_and_remove(cache->am, cache->amMap);
         }
 
-        create_and_insert_node_at_tail(page, cache->am, cache->amMap);
+        util_insert_node_at_tail_and_map(page, cache->am, cache->amMap);
 
         cache->missCount++;
     } else { // Page not in Cache (miss)
         int a1inCurrSize = dbllist_size(cache->a1in);
         if(a1inCurrSize == cache->a1inSize) {
-            int headVal = peek_val_and_remove_head(cache->a1in, cache->a1inMap);
+            int headVal = util_peek_head_value_and_remove(cache->a1in, cache->a1inMap);
 
             int a1outCurrSize = dbllist_size(cache->a1out);
             if(a1outCurrSize == cache->a1outSize) {
-                peek_val_and_remove_head(cache->a1out, cache->a1outMap);
+                util_peek_head_value_and_remove(cache->a1out, cache->a1outMap);
             }
 
-            create_and_insert_node_at_tail(headVal, cache->a1out, cache->a1outMap);
+            util_insert_node_at_tail_and_map(headVal, cache->a1out, cache->a1outMap);
         }
 
-        create_and_insert_node_at_tail(page, cache->a1in, cache->a1inMap);
+        util_insert_node_at_tail_and_map(page, cache->a1in, cache->a1inMap);
 
         cache->missCount++;
     }
