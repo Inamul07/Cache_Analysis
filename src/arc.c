@@ -6,6 +6,8 @@
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
 
+// CODE_REVIEW: write comments and name funcions properly
+
 struct arc {
     dbllist* t1;
     dbllist* t2;
