@@ -19,6 +19,7 @@ struct clock_cache_ {
     int hitCount, missCount;    
 };
 
+// Initializes the clock cache
 clock_cache* clock_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -44,6 +45,7 @@ int* copyOf(int currIdx) {
     return idx;
 }
 
+// Performs clock cache operation on the cache with the given page
 void clock_access(clock_cache* cache, int data) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -83,6 +85,7 @@ void print_clock_node(clock_node* node) {
     printf("(%d, %d)", node->data, node->r_bit);
 }
 
+// Prints the clock buffer at the current state
 void clock_print_buffer(clock_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -101,6 +104,7 @@ void clock_print_buffer(clock_cache* cache) {
     printf("]\n");
 }
 
+// Prints the reference, hit and miss count
 void clock_analysis(clock_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -114,6 +118,7 @@ void clock_analysis(clock_cache* cache) {
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
+// Performs clock cache operation for each element, from the array, in a linear fashion
 void clock_put_array(clock_cache* cache, int* pages, int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -124,6 +129,7 @@ void clock_put_array(clock_cache* cache, int* pages, int size) {
     }
 }
 
+// Frees the memory occupied by the cache
 void clock_destroy(clock_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
