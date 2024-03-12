@@ -43,6 +43,7 @@ arc_cache* arc_init(int capacity) {
     cache->capacity = capacity;
     cache->hitCount = 0;
     cache->missCount = 0;
+    return cache;
 }
 
 int max(int a, int b) {
