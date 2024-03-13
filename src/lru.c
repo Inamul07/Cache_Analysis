@@ -72,7 +72,7 @@ void lru_analysis(lru_cache* cache) {
     lru_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
-    float hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    double hitRatio = lru_get_hit_ratio(cache);
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
@@ -96,4 +96,14 @@ void lru_destroy(lru_cache* cache) {
     dbllist_destroy(cache->list);
     hmap_free(cache->map);
     free(cache);
+}
+
+double lru_get_hit_ratio(lru_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return -1.0;
+    }
+    int totalReference = cache->hitCount + cache->missCount;
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    return hitRatio;
 }

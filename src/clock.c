@@ -114,7 +114,7 @@ void clock_analysis(clock_cache* cache) {
     clock_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
-    float hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
@@ -140,4 +140,14 @@ void clock_destroy(clock_cache* cache) {
     }
     hmap_free(cache->map);
     free(cache);
+}
+
+double clock_get_hit_ratio(clock_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return -1.0;
+    }
+    int totalReference = cache->hitCount + cache->missCount;
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    return hitRatio;
 }

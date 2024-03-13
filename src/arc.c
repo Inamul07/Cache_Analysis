@@ -168,7 +168,7 @@ void arc_analysis(arc_cache* cache) {
     arc_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
-    float hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
@@ -198,4 +198,14 @@ void arc_destroy(arc_cache* cache) {
     hmap_free(cache->b1Map);
     hmap_free(cache->b2Map);
     free(cache);
+}
+
+double arc_get_hit_ratio(arc_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return -1.0;
+    }
+    int totalReference = cache->hitCount + cache->missCount;
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    return hitRatio;
 }

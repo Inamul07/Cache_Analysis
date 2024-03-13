@@ -118,7 +118,7 @@ void two_queue_analysis(two_queue_cache* cache) {
     two_queue_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
-    float hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
@@ -135,4 +135,14 @@ void two_queue_destroy(two_queue_cache* cache) {
     hmap_free(cache->a1inMap);
     hmap_free(cache->a1outMap);
     free(cache);
+}
+
+double two_queue_get_hit_ratio(two_queue_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
+        return -1.0;
+    }
+    int totalReference = cache->hitCount + cache->missCount;
+    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    return hitRatio;
 }

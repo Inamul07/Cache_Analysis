@@ -38,3 +38,11 @@ makelib: lib/dbllist.o lib/hashmap.o lib/myhashmap.o
 
 clean:
 	rm -f main.o lru.o clock.o two_queue.o arc.o utils.o main
+
+main_benchmark.o: bench_mark/main_benchmark.cc
+	g++ -c -I./lib/ -I./include/ bench_mark/main_benchmark.cc
+
+bench: main.o lru.o clock.o two_queue.o arc.o utils.o lib/dbllist.o lib/myhashmap.o main_benchmark.o
+	g++ -o benchmark main_benchmark.o lru.o clock.o two_queue.o arc.o utils.o lib/dbllist.o lib/myhashmap.o -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/ -lbenchmark -lpthread
+	rm main.o main_benchmark.o lru.o clock.o two_queue.o arc.o utils.o lib/dbllist.o lib/myhashmap.o
+	./benchmark --benchmark_counters_tabular=true

@@ -9,6 +9,6 @@ void two_queue_analysis(two_queue_cache* cache);
 void two_queue_put_array(two_queue_cache* cache, int* pages, int size);
 void two_queue_print_buffer(two_queue_cache* cache);
 void two_queue_destroy(two_queue_cache* cache);
-
+double two_queue_get_hit_ratio(two_queue_cache* cache);
 
 #endif
