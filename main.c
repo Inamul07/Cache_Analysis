@@ -1,12 +1,5 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
 
-#include "lru.h"
-#include "clock.h"
-#include "two_queue.h"
-#include "arc.h"
 #include "cache_factory.h"
 
 int main() {

@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "lru.h"
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
+
+#include "lru.h"
+#include "utils.h"
 
 struct lru_cache_ {
     dbllist* list; 
@@ -14,6 +16,7 @@ struct lru_cache_ {
 };
 
 // Initializes the LRU cache
+// If capacity is less than 1. Returns NULL
 lru_cache* lru_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -29,31 +32,36 @@ lru_cache* lru_init(int capacity) {
 }
 
 // Performs LRU cache operation on the cache with the given page
-void lru_access(lru_cache* cache, int data) {
+// If the requested page is not available in the cache, the LRU algorithm adds the page at the Most Recently Used (tail) position in the cache.
+// If the requested page is available in the cache, then the page is moved to the Most Recently Used (tail) position in the cache.
+// When cache size is full, the Least Recently Used (head) page is removed (evicted) from the cache.
+void lru_access(lru_cache* cache, int page) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
         return;
     }
-    if(hmap_contains(cache->map, data)) { // If page in cache
-        Node* node = hmap_get(cache->map, data);
+    if(hmap_contains(cache->map, page)) { // page in cache (hit)
+
+        // Move the page to Most Recently Used (tail) Position
+        Node* node = hmap_get(cache->map, page);
         dbllist_move_node_to_tail(cache->list, node);
         cache->hitCount++;
-    } else { // Page not in cache
+    } 
+    else { // Page not in cache
         if(cache->currSize == cache->capacity) {
-            int node_val = dbllist_peek_head_val(cache->list);
-            dbllist_remove_head(cache->list);
-            hmap_remove(cache->map, node_val);
+
+            // Cache is Full, Remove the Least Recently Used (head) page from the cache.
+            util_peek_head_value_and_remove(cache->list, cache->map);
             cache->currSize--;
         }
-        Node* node = node_create(data, NULL, NULL);
-        dbllist_insert_node_at_tail(cache->list, node);
-        hmap_insert(cache->map, data, node);
+        // Insert the page at the Most Recently Used (tail) position
+        util_insert_node_at_tail_and_map(page, cache->list, cache->map);
         cache->currSize++;
         cache->missCount++;
     }
 }
 
-// Prints the LRU buffer at the current state
+// Prints the LRU buffer at that current state.
 void lru_print_buffer(lru_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -62,10 +70,11 @@ void lru_print_buffer(lru_cache* cache) {
     dbllist_print(cache->list);
 }
 
-// Prints the reference, hit and miss count
+// Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
+// Reference count must be atleast one before calling this method.
 void lru_analysis(lru_cache* cache) {
-    if(cache == NULL) {
-        printf("Cache cannot be null\n");
+    if(cache == NULL || cache->missCount == 0) {
+        printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
         return;
     }
     printf("Buffer = ");
@@ -77,7 +86,8 @@ void lru_analysis(lru_cache* cache) {
 }
 
 // Performs LRU cache operation for each element, from the array, in a linear fashion
-void lru_put_array(lru_cache* cache, int* pages, int size) {
+// This method calls the lru_access() method for each page in the array
+void lru_put_array(lru_cache* cache, int pages[], int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
         return;
@@ -98,9 +108,11 @@ void lru_destroy(lru_cache* cache) {
     free(cache);
 }
 
+// Calculates and returns the hit ratio at that current state.
+// Returns -1, if the cache is NULL or if there were no references before
 double lru_get_hit_ratio(lru_cache* cache) {
-    if(cache == NULL) {
-        printf("Cache cannot be null\n");
+    if(cache == NULL || cache->missCount == 0) {
+        printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
         return -1.0;
     }
     int totalReference = cache->hitCount + cache->missCount;

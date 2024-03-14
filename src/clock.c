@@ -4,11 +4,12 @@
 #include <string.h>
 
 #include "hashmap/myhashmap.h"
+
 #include "clock.h"
 
 struct clock_node_ {
     int data;
-    bool r_bit;
+    bool rBit;
 };
 
 struct clock_cache_ {
@@ -20,6 +21,7 @@ struct clock_cache_ {
 };
 
 // Initializes the clock cache
+// If capacity is less than 1. Returns NULL
 clock_cache* clock_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -45,32 +47,45 @@ int* copy_of(int currIdx) {
     return idx;
 }
 
-// Performs clock cache operation on the cache with the given page
+// Performs clock cache operation on the cache with the given page.
+// This algorithm contains a clock hand (currIdx) that points to a page in the cache.
+// Each page in cache has an additional reference bit.
+// If the refernced page is in cache, its reference bit is set to one.
+// If the page is not in the cache, the clock hand finds a page with a refernce bit of 0. 
+// Then the page is replaced with the referenced page and the reference bit of that pages is set to 1.
 void clock_access(clock_cache* cache, int data) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
         return;
     }
-    if(hmap_contains(cache->map, data)) {
-        // hit
+    if(hmap_contains(cache->map, data)) { // hit
+
+        // Setting the reference bit to 1
         int* page_idx = hmap_get(cache->map, data);
-        cache->cache[*page_idx]->r_bit = 1;
+        cache->cache[*page_idx]->rBit = 1;
         cache->hitCount++;
-    } else {
-        // miss
+    } else { // miss
         if(cache->currSize == cache->capacity) {
-            while(cache->cache[cache->currIdx]->r_bit != 0) {
-                cache->cache[cache->currIdx]->r_bit = 0;
+
+            // Cache is Full, Move the clock hand till it finds a page with reference bit 0.
+            while(cache->cache[cache->currIdx]->rBit != 0) {
+                cache->cache[cache->currIdx]->rBit = 0;
                 cache->currIdx++;
                 cache->currIdx %= cache->capacity;
             }
+
+            // Remove the page from the cache
             hmap_remove(cache->map, cache->cache[cache->currIdx]->data);
             cache->currSize--;
         }
+
+        // Insert the page in the cache, at where the clock hand is pointing and set the reference bit to 1.
         hmap_insert(cache->map, data, copy_of(cache->currIdx));
         cache->cache[cache->currIdx]->data = data;
-        cache->cache[cache->currIdx]->r_bit = 1;
+        cache->cache[cache->currIdx]->rBit = 1;
         cache->currSize++;
+
+        // Move the clock hand
         cache->currIdx++;
         cache->currIdx %= cache->capacity;
         cache->missCount++;
@@ -82,7 +97,7 @@ void print_clock_node(clock_node* node) {
         printf("Node is NULL");
         return;
     }
-    printf("(%d, %d)", node->data, node->r_bit);
+    printf("(%d, %d)", node->data, node->rBit);
 }
 
 // Prints the clock buffer at the current state
@@ -104,10 +119,11 @@ void clock_print_buffer(clock_cache* cache) {
     printf("]\n");
 }
 
-// Prints the reference, hit and miss count
+// Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
+// Reference count must be atleast one before calling this method.
 void clock_analysis(clock_cache* cache) {
-    if(cache == NULL) {
-        printf("Cache cannot be null\n");
+    if(cache == NULL || cache->missCount == 0) {
+        printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
         return;
     }
     printf("Buffer = ");
@@ -119,7 +135,8 @@ void clock_analysis(clock_cache* cache) {
 }
 
 // Performs clock cache operation for each element, from the array, in a linear fashion
-void clock_put_array(clock_cache* cache, int* pages, int size) {
+// This method calls the clock_access() method for each page in the array
+void clock_put_array(clock_cache* cache, int pages[], int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
         return;
@@ -142,9 +159,11 @@ void clock_destroy(clock_cache* cache) {
     free(cache);
 }
 
+// Calculates and returns the hit ratio at that current state.
+// Returns -1, if the cache is NULL or if there were no references before
 double clock_get_hit_ratio(clock_cache* cache) {
-    if(cache == NULL) {
-        printf("Cache cannot be null\n");
+    if(cache == NULL || cache->missCount == 0) {
+        printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
         return -1.0;
     }
     int totalReference = cache->hitCount + cache->missCount;
