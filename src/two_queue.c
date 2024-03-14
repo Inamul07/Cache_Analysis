@@ -22,11 +22,14 @@ struct two_queue {
 };
 
 // Creates and Initializes the Two Queue Cache
-two_queue_cache* two_queue_init(int amSize, int a1inSize, int a1outSize) {
-    if(amSize <= 0 || a1inSize <= 0 || a1outSize <= 0) {
+two_queue_cache* two_queue_init(int capacity) {
+    if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
         return NULL;
     }
+    int amSize = (capacity/ 2) + (capacity%2 == 0? 0: 1);
+    int a1inSize = (capacity/ 2);
+    int a1outSize = amSize;
     two_queue_cache* cache = malloc(sizeof(two_queue_cache));
     cache->am = dbllist_create();
     cache->a1in = dbllist_create();

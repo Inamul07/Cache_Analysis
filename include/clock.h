@@ -9,7 +9,7 @@ clock_cache* clock_init(int capacity);
 void clock_access(clock_cache* cache, int page);
 void clock_analysis(clock_cache* cache);
 void clock_print_buffer(clock_cache* cache);
-void clock_put_array(clock_cache* cache, int* pages, int size);
+void clock_put_array(clock_cache* cache, int pages[], int size);
 void clock_destroy(clock_cache* cache);
 double clock_get_hit_ratio(clock_cache* cache);
 

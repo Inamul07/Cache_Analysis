@@ -7,6 +7,7 @@
 #include "clock.h"
 #include "two_queue.h"
 #include "arc.h"
+#include "cache_factory.h"
 
 int main() {
 
@@ -14,31 +15,31 @@ int main() {
     int size = sizeof(pages) / sizeof(pages[0]);
 
     printf("\nLRU:\n");
-    lru_cache* cache = lru_init(3);
-    lru_put_array(cache, pages, size);
-    lru_analysis(cache);
-    lru_destroy(cache);
+    generic_cache* cache = cache_init("lru", 3);
+    cache_put_array(cache, pages, size);
+    cache_analysis(cache);
+    cache_destroy(cache);
     printf("\n");
 
     printf("\nCLOCK:\n");
-    clock_cache* cache2 = clock_init(3);
-    clock_put_array(cache2, pages, size);
-    clock_analysis(cache2);
-    clock_destroy(cache2);
+    generic_cache* cache2 = cache_init("clock", 3);
+    cache_put_array(cache2, pages, size);
+    cache_analysis(cache2);
+    cache_destroy(cache2);
     printf("\n");
 
-    two_queue_cache* cache3 = two_queue_init(3, 2, 3);
+    generic_cache* cache3 = cache_init("two_queue", 5);
     printf("\nTWO QUEUE:\n");
-    two_queue_put_array(cache3, pages, size);
-    two_queue_analysis(cache3);
-    two_queue_destroy(cache3);
+    cache_put_array(cache3, pages, size);
+    cache_analysis(cache3);
+    cache_destroy(cache3);
     printf("\n");
 
-    arc_cache* cache4 = arc_init(3);
+    generic_cache* cache4 = cache_init("arc", 3);
     printf("ARC:\n");
-    arc_put_array(cache4, pages, size);
-    arc_analysis(cache4);
-    arc_destroy(cache4);
+    cache_put_array(cache4, pages, size);
+    cache_analysis(cache4);
+    cache_destroy(cache4);
     printf("\n");
 
     return 0;

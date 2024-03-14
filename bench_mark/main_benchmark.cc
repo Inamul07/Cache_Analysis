@@ -69,11 +69,7 @@ static void BM_CLOCK(benchmark::State &state) {
 }
 
 static void BM_TWO_QUEUE(benchmark::State &state) {
-    int size = state.range(0);
-    int amSize = (size / 2) + (size%2 == 0? 0: 1);
-    int a1inSize = (size / 2);
-    int a1outSize = amSize;
-    two_queue_cache* cache = two_queue_init(amSize, a1inSize, a1outSize);
+    two_queue_cache* cache = two_queue_init(state.range(0));
     string filename = getFileName(state.range(1));
     vector<int> pages = getDataSet(filename);
 
