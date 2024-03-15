@@ -10,6 +10,7 @@
 
 struct cache_ {
     void* cache;
+    // Code Review: 0 sized array? you are not allocating memory for this so check how this works. After that change this to enum
     char cacheName[];
 };
 
@@ -47,6 +48,7 @@ void cache_access(void* cache, int page) {
     generic_cache* genCache = (generic_cache*) cache;
     char cacheName[10];
     strcpy(cacheName, genCache->cacheName);
+    // Code Review: Using if else ladder is fine but there is better and more readable way for this.
     if(strcmp(cacheName, "lru") == 0) {
         lru_access(genCache->cache, page);
     } else if(strcmp(cacheName, "clock") == 0) {

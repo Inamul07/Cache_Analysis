@@ -73,6 +73,7 @@ void lru_print_buffer(lru_cache* cache) {
 // Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
 // Reference count must be atleast one before calling this method.
 void lru_analysis(lru_cache* cache) {
+    // Code Review: May be you can remove missCount check here....
     if(cache == NULL || cache->missCount == 0) {
         printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
         return;

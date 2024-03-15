@@ -73,6 +73,7 @@ static void BM_TWO_QUEUE(benchmark::State &state) {
     string filename = getFileName(state.range(1));
     vector<int> pages = getDataSet(filename);
 
+    // Code Review: Compute time for this loop alone
     for(auto _ : state) {
         two_queue_put_array(cache, pages.data(), pages.size());
     }

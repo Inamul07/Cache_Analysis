@@ -1,3 +1,5 @@
+// Code Review: Explain more about clock hand usage
+
 // This Header File, "clock.h", contains the function definitions that are required to implement the "Clock Replacement algorithm".
 // The function implementations for these methods can be found in src/clock.c 
 

@@ -164,6 +164,7 @@ void two_queue_destroy(two_queue_cache* cache) {
 double two_queue_get_hit_ratio(two_queue_cache* cache) {
     if(cache == NULL || cache->missCount == 0) {
         printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
+        // Code Review: 0 can be used
         return -1.0;
     }
     int totalReference = cache->hitCount + cache->missCount;
