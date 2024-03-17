@@ -1,7 +1,10 @@
 all: final clean
 
-final: main.o lru.o clock.o two_queue.o arc.o utils.o cache_factory.o
-	gcc -o main main.o lru.o clock.o two_queue.o arc.o utils.o cache_factory.o -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/
+OBJECTS = lru.o clock.o two_queue.o arc.o utils.o cache_factory.o
+LIBRARY = -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/
+
+final: main.o $(OBJECTS)
+	gcc -o main main.o $(OBJECTS) $(LIBRARY)
 	./main
 
 main.o : main.c
@@ -40,13 +43,13 @@ makelib: lib/dbllist.o lib/hashmap.o lib/myhashmap.o
 	rm lib/dbllist.o lib/hashmap.o lib/myhashmap.o
 
 clean:
-	rm -f main.o lru.o clock.o two_queue.o arc.o utils.o cache_factory.o main
+	rm -f main.o $(OBJECTS) main
 
 main_benchmark.o: benchmark/main_benchmark.cc
 	g++ -c -I./lib/ -I./include/ benchmark/main_benchmark.cc
 
-benchmark: main.o lru.o clock.o two_queue.o arc.o utils.o lib/dbllist.o lib/myhashmap.o main_benchmark.o
-	g++ -o bench main_benchmark.o lru.o clock.o two_queue.o arc.o utils.o lib/dbllist.o lib/myhashmap.o -L./lib/ -ldbllist -lhashmap -Wl,-rpath,./lib/ -lbenchmark -lpthread
-	rm main.o main_benchmark.o lru.o clock.o two_queue.o arc.o utils.o lib/dbllist.o lib/myhashmap.o
+benchmark: main.o $(OBJECTS) main_benchmark.o
+	g++ -o bench main_benchmark.o $(OBJECTS) $(LIBRARY) -lbenchmark -lpthread
+	rm main.o main_benchmark.o $(OBJECTS)
 	./bench --benchmark_counters_tabular=true
 	rm bench

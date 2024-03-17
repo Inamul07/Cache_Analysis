@@ -22,8 +22,10 @@ struct arc {
     int hitCount, missCount;
 };
 
-// Initializes the ARC cache
-// If capacity is less than 1. Returns NULL
+/*
+    Initializes the ARC cache
+    If capacity is less than 1. Returns NULL
+*/
 arc_cache* arc_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -72,11 +74,13 @@ void perform_replace(arc_cache* cache, int page) {
     }
 }
 
-// Performs ARC Cache operation on the cache with the given page.
-// This algorithm contains Four Lists: T1, T2, B1, B2
-// The lists T1 & T2 are considered as cache. While, B1 & B2 (Ghost Caches) stores the history of (evicted) pages.
-// T1 & B1 Lists are together known as L1 and T2 & B2 Lists are together known as L2.
-// Refer the ARC algorithm from its research paper. (Given in the "References" section in README).
+/*
+    Performs ARC Cache operation on the cache with the given page.
+    This algorithm contains Four Lists: T1, T2, B1, B2
+    The lists T1 & T2 are considered as cache. While, B1 & B2 (Ghost Caches) stores the history of (evicted) pages.
+    T1 & B1 Lists are together known as L1 and T2 & B2 Lists are together known as L2.
+    Refer the ARC algorithm from its research paper. (Given in the "References" section in README).
+*/
 void arc_access(arc_cache* cache, int page) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -187,23 +191,27 @@ void arc_print_buffer(arc_cache* cache) {
     printf("P = %d\n", cache->p);
 }
 
-// Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
-// Reference count must be atleast one before calling this method.
+/*
+    Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
+    Reference count must be atleast one before calling this method.
+*/
 void arc_analysis(arc_cache* cache) {
-    if(cache == NULL || cache->missCount == 0) {
-        printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
+    if(cache == NULL) {
+        printf("Cache cannot be null\n");
         return;
     }
     printf("Buffer: \n");
     arc_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
-    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    double hitRatio = arc_get_hit_ratio(cache);
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
-// Performs ARC cache operation for each element, from the array, in a linear fashion
-// This method calls the arc_access() method for each page in the array
+/*
+    Performs ARC cache operation for each element, from the array, in a linear fashion
+    This method calls the arc_access() method for each page in the array
+*/
 void arc_put_array(arc_cache* cache, int pages[], int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -231,12 +239,14 @@ void arc_destroy(arc_cache* cache) {
     free(cache);
 }
 
-// Calculates and returns the hit ratio at that current state.
-// Returns -1, if the cache is NULL or if there were no references before
+/*
+    Calculates and returns the hit ratio at that current state.
+    Returns 0, if the cache is NULL or if there were no references before
+*/
 double arc_get_hit_ratio(arc_cache* cache) {
     if(cache == NULL || cache->missCount == 0) {
         printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
-        return -1.0;
+        return 0;
     }
     int totalReference = cache->hitCount + cache->missCount;
     double hitRatio = (cache->hitCount * 1.0) / (totalReference);

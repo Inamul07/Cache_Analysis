@@ -14,9 +14,11 @@ struct cache_ {
     char cacheName[];
 };
 
-// Creates and Initialises the cache, based on the given cache_name.
-// If capacity is less than 1. Returns NULL
-void* cache_init(char* cacheName, int capacity) {
+/*
+    Creates and Initialises the cache, based on the given cache_name.
+    If capacity is less than 1. Returns NULL
+*/
+generic_cache* cache_init(char* cacheName, int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
         return NULL;
@@ -40,7 +42,7 @@ void* cache_init(char* cacheName, int capacity) {
 }
 
 // Performs the respective cache algorithm for the given page.
-void cache_access(void* cache, int page) {
+void cache_access(generic_cache* cache, int page) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
         return;
@@ -60,10 +62,11 @@ void cache_access(void* cache, int page) {
     }
 }
 
-
-// Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
-// Reference count must be atleast one before calling this method.
-void cache_analysis(void* cache) {
+/*
+    Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
+    Reference count must be atleast one before calling this method.
+*/
+void cache_analysis(generic_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
         return;
@@ -83,7 +86,7 @@ void cache_analysis(void* cache) {
 }
 
 // Performs the respective Cache operation for each element, from the array, in a linear fashion
-void cache_put_array(void* cache, int pages[], int size) {
+void cache_put_array(generic_cache* cache, int pages[], int size) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
         return;
@@ -103,7 +106,7 @@ void cache_put_array(void* cache, int pages[], int size) {
 }
 
 // Prints the Cache buffer at that current state
-void cache_print_buffer(void* cache) {
+void cache_print_buffer(generic_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
         return;
@@ -123,7 +126,7 @@ void cache_print_buffer(void* cache) {
 }
 
 // Frees the memory occupied by the cache
-void cache_destroy(void* cache) {
+void cache_destroy(generic_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
         return;
@@ -143,9 +146,11 @@ void cache_destroy(void* cache) {
     free(cache);
 }
 
-// Calculates and returns the hit ratio at that current state.
-// Returns -1, if the cache is NULL or if there were no references before
-double cache_get_hit_ratio(void* cache) {
+/*
+    Calculates and returns the hit ratio at that current state.
+    Returns -1, if the cache is NULL or if there were no references before
+*/
+double cache_get_hit_ratio(generic_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
         return -1.0;

@@ -1,9 +1,12 @@
 #include <benchmark/benchmark.h>
-#include <cstdlib>
 #include <vector>
 #include <iostream>
-#include <iomanip>
 #include <fstream>
+
+#define LRU 0
+#define CLOCK 1
+#define TWO_QUEUE 2
+#define ARC 3
 
 using namespace std;
 
@@ -12,6 +15,7 @@ extern "C" {
     #include "clock.h"
     #include "two_queue.h"
     #include "arc.h"
+    #include "cache_factory.h"
 }
 
 vector<int> getDataSet(string &filename) {
@@ -37,71 +41,33 @@ string getFileName(int count) {
     return prefix + to_string(count) + suffix;
 }
 
-static void BM_LRU(benchmark::State &state) {
-    lru_cache* cache = lru_init(state.range(0));
-    string filename = getFileName(state.range(1));
-    vector<int> pages = getDataSet(filename);
-
-    for (auto _ : state) {
-        lru_put_array(cache, pages.data(), pages.size());
-    }
-
-    double hitPercent = lru_get_hit_ratio(cache) * 100.0;
-    state.counters["Hit Percent [%]"] = hitPercent;
-
-    lru_destroy(cache);
+string get_cache_name(int choice) {
+    if(choice == LRU) return "lru";
+    else if(choice == CLOCK) return "clock";
+    else if(choice == TWO_QUEUE) return "two_queue";
+    return "arc";
 }
 
-static void BM_CLOCK(benchmark::State &state) {
-    clock_cache* cache = clock_init(state.range(0));
-    string filename = getFileName(state.range(1));
-    vector<int> pages = getDataSet(filename);
-
-
-    for(auto _ : state) {
-        clock_put_array(cache, pages.data(), pages.size());
-    }
-
-    double hitPercent = clock_get_hit_ratio(cache) * 100.0;
-    state.counters["Hit Percent [%]"] = hitPercent;
-
-    clock_destroy(cache);
-}
-
-static void BM_TWO_QUEUE(benchmark::State &state) {
-    two_queue_cache* cache = two_queue_init(state.range(0));
-    string filename = getFileName(state.range(1));
-    vector<int> pages = getDataSet(filename);
-
-    // Code Review: Compute time for this loop alone
-    for(auto _ : state) {
-        two_queue_put_array(cache, pages.data(), pages.size());
-    }
-
-    double hitPercent = two_queue_get_hit_ratio(cache) * 100.0;
-    state.counters["Hit Percent [%]"] = hitPercent;
-
-    two_queue_destroy(cache);
-}
-
-static void BM_ARC(benchmark::State &state) {
-    arc_cache* cache = arc_init(state.range(0));
-    string filename = getFileName(state.range(1));
+static void BM_CACHE(benchmark::State &state) {
+    string cacheName = get_cache_name(state.range(0));
+    generic_cache* cache = cache_init(cacheName.data(), state.range(1));
+    string filename = getFileName(state.range(2));
     vector<int> pages = getDataSet(filename);
 
     for(auto _ : state) {
-        arc_put_array(cache, pages.data(), pages.size());
+        cache_put_array(cache, pages.data(), pages.size());
     }
 
-    double hitPercent = arc_get_hit_ratio(cache) * 100.0;
-    state.counters["Hit Percent[%]"] = hitPercent;
+    double hitRatio = cache_get_hit_ratio(cache) * 100.0;
+    state.counters["Hit Percent[%]"] = hitRatio;
 
-    arc_destroy(cache);
+    cache_destroy(cache);
+    
 }
 
-BENCHMARK(BM_LRU)->ArgsProduct({{100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Complexity();
-BENCHMARK(BM_CLOCK)->ArgsProduct({{100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Complexity();
-BENCHMARK(BM_TWO_QUEUE)->ArgsProduct({{100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Complexity();
-BENCHMARK(BM_ARC)->ArgsProduct({{100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{LRU}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("LRU")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{CLOCK}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("CLOCK")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{TWO_QUEUE}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{ARC}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("ARC")->Complexity();
 
 BENCHMARK_MAIN();

@@ -19,8 +19,10 @@ struct two_queue {
     int hitCount, missCount;
 };
 
-// Creates and Initializes the Two Queue Cache
-// If capacity is less than 1. Returns NULL
+/*
+    Creates and Initializes the Two Queue Cache
+    If capacity is less than 1. Returns NULL
+*/
 two_queue_cache* two_queue_init(int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
@@ -43,12 +45,14 @@ two_queue_cache* two_queue_init(int capacity) {
     cache->missCount = 0;
 }
 
-// Performs Two Queue Cache operation on the cache with the given page
-// This algorithm contains 3 lists. Am (LRU List), A1In (FIFO List), A1Out (FIFO List)
-// Only Am & A1In are considered as caches, while A1Out is a History Buffer.
-// If page is in Am, the page is most to the Most Recently Used (tail) position.
-// If the page is in A1Out (it is a miss), the page gets promoted to Am.
-// If a page is not in the cache, it is inserted to A1In.
+/*
+    Performs Two Queue Cache operation on the cache with the given page
+    This algorithm contains 3 lists. Am (LRU List), A1In (FIFO List), A1Out (FIFO List)
+    Only Am & A1In are considered as caches, while A1Out is a History Buffer.
+    If page is in Am, the page is most to the Most Recently Used (tail) position.
+    If the page is in A1Out (it is a miss), the page gets promoted to Am.
+    If a page is not in the cache, it is inserted to A1In.
+*/
 void two_queue_access(two_queue_cache* cache, int page) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -103,8 +107,10 @@ void two_queue_access(two_queue_cache* cache, int page) {
     }
 }
 
-// Performs Two Queue cache operation for each element, from the array, in a linear fashion
-// This method calls the two_queue_access() method for each page in the array
+/*
+    Performs Two Queue cache operation for each element, from the array, in a linear fashion
+    This method calls the two_queue_access() method for each page in the array
+*/
 void two_queue_put_array(two_queue_cache* cache, int pages[], int size) {
     if(cache == NULL) {
         printf("Cache cannot be null\n");
@@ -129,18 +135,20 @@ void two_queue_print_buffer(two_queue_cache* cache) {
     dbllist_print(cache->a1out);
 }
 
-// Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
-// Reference count must be atleast one before calling this method.
+/*
+    Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
+    Reference count must be atleast one before calling this method.
+*/
 void two_queue_analysis(two_queue_cache* cache) {
-    if(cache == NULL || cache->missCount == 0) {
-        printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
+    if(cache == NULL ) {
+        printf("Cache cannot be null\n");
         return;
     }
     printf("Buffer: \n");
     two_queue_print_buffer(cache);
     int totalReference = cache->hitCount + cache->missCount;
     printf("Total References = %d\nHit Count = %d\nMiss Count = %d\n", totalReference, cache->hitCount, cache->missCount);
-    double hitRatio = (cache->hitCount * 1.0) / (totalReference);
+    double hitRatio = two_queue_get_hit_ratio(cache);
     printf("Hit Ratio = %f\n", hitRatio);
 }
 
@@ -159,13 +167,14 @@ void two_queue_destroy(two_queue_cache* cache) {
     free(cache);
 }
 
-// Calculates and returns the hit ratio at that current state.
-// Returns -1, if the cache is NULL or if there were no references before
+/*
+    Calculates and returns the hit ratio at that current state.
+    Returns 0, if the cache is NULL or if there were no references before
+*/
 double two_queue_get_hit_ratio(two_queue_cache* cache) {
     if(cache == NULL || cache->missCount == 0) {
         printf(!cache? "Cache cannot be null\n": "No references have been made.\n");
-        // Code Review: 0 can be used
-        return -1.0;
+        return 0;
     }
     int totalReference = cache->hitCount + cache->missCount;
     double hitRatio = (cache->hitCount * 1.0) / (totalReference);

@@ -1,5 +1,7 @@
-// This header file, "utils.h", contains helper functions that are used in the Cache Replacement Algorithms.
-// The function implementations for these methods can be found in src/utils.c  
+/*
+    This header file, "utils.h", contains helper functions that are used in the Cache Replacement Algorithms.
+    The function implementations for these methods can be found in src/utils.c  
+*/
 
 #ifndef UTILS_H
 #define UTILS_H
