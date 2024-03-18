@@ -8,27 +8,27 @@ int main() {
     int size = sizeof(pages) / sizeof(pages[0]);
 
     printf("\nLRU:\n");
-    generic_cache* cache = cache_init("lru", 3);
+    generic_cache* cache = cache_init(LRU, 3);
     cache_put_array(cache, pages, size);
     cache_analysis(cache);
     cache_destroy(cache);
     printf("\n");
 
     printf("\nCLOCK:\n");
-    generic_cache* cache2 = cache_init("clock", 3);
+    generic_cache* cache2 = cache_init(CLOCK, 3);
     cache_put_array(cache2, pages, size);
     cache_analysis(cache2);
     cache_destroy(cache2);
     printf("\n");
 
-    generic_cache* cache3 = cache_init("two_queue", 5);
+    generic_cache* cache3 = cache_init(TWO_QUEUE, 5);
     printf("\nTWO QUEUE:\n");
     cache_put_array(cache3, pages, size);
     cache_analysis(cache3);
     cache_destroy(cache3);
     printf("\n");
 
-    generic_cache* cache4 = cache_init("arc", 3);
+    generic_cache* cache4 = cache_init(ARC, 3);
     printf("ARC:\n");
     cache_put_array(cache4, pages, size);
     cache_analysis(cache4);

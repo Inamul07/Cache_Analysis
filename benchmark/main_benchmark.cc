@@ -3,18 +3,13 @@
 #include <iostream>
 #include <fstream>
 
-#define LRU 0
-#define CLOCK 1
-#define TWO_QUEUE 2
-#define ARC 3
+#define SEQ 0
+#define LOOP 1
+#define RAND 2
 
 using namespace std;
 
 extern "C" {
-    #include "lru.h"
-    #include "clock.h"
-    #include "two_queue.h"
-    #include "arc.h"
     #include "cache_factory.h"
 }
 
@@ -35,28 +30,28 @@ vector<int> getDataSet(string &filename) {
     return dataSet;
 }
 
-string getFileName(int count) {
+string getFileName(int count, int accessPattern) {
     string prefix = "data/file_";
     string suffix = ".txt";
-    return prefix + to_string(count) + suffix;
-}
-
-string get_cache_name(int choice) {
-    if(choice == LRU) return "lru";
-    else if(choice == CLOCK) return "clock";
-    else if(choice == TWO_QUEUE) return "two_queue";
-    return "arc";
+    string pattern;
+    if(accessPattern == SEQ) pattern = "seq";
+    else if(accessPattern == LOOP) pattern = "loop";
+    else if(accessPattern == RAND) pattern = "rand";
+    else pattern = "none";
+    return prefix + pattern + "_" + to_string(count) + suffix;
 }
 
 static void BM_CACHE(benchmark::State &state) {
-    string cacheName = get_cache_name(state.range(0));
-    generic_cache* cache = cache_init(cacheName.data(), state.range(1));
-    string filename = getFileName(state.range(2));
+    cacheType cacheName = (cacheType) state.range(2);
+    generic_cache* cache = cache_init(cacheName, state.range(0));
+    string filename = getFileName(state.range(1), state.range(3));
     vector<int> pages = getDataSet(filename);
 
     for(auto _ : state) {
         cache_put_array(cache, pages.data(), pages.size());
     }
+
+    state.SetComplexityN(state.range(1));
 
     double hitRatio = cache_get_hit_ratio(cache) * 100.0;
     state.counters["Hit Percent[%]"] = hitRatio;
@@ -65,9 +60,19 @@ static void BM_CACHE(benchmark::State &state) {
     
 }
 
-BENCHMARK(BM_CACHE)->ArgsProduct({{LRU}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("LRU")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{CLOCK}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("CLOCK")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{TWO_QUEUE}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{ARC}, {100, 150, 200}, {1000, 10000, 100000}})->Unit(benchmark::kMillisecond)->Name("ARC")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("LRU_SEQ")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("CLOCK_SEQ")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_SEQ")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {ARC}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("ARC_SEQ")->Complexity();
+
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("LRU_LOOP")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("CLOCK_LOOP")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_LOOP")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {ARC}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("ARC_LOOP")->Complexity();
+
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {RAND}})->Unit(benchmark::kMillisecond)->Name("LRU_RAND")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {RAND}})->Unit(benchmark::kMillisecond)->Name("CLOCK_RAND")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {RAND}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_RAND")->Complexity();
+BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {ARC}, {RAND}})->Unit(benchmark::kMillisecond)->Name("ARC_RAND")->Complexity();
 
 BENCHMARK_MAIN();

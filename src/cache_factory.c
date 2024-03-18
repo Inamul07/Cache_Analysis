@@ -10,28 +10,28 @@
 
 struct cache_ {
     void* cache;
-    // Code Review: 0 sized array? you are not allocating memory for this so check how this works. After that change this to enum
-    char cacheName[];
+    cacheType cacheName;
 };
 
 /*
     Creates and Initialises the cache, based on the given cache_name.
     If capacity is less than 1. Returns NULL
+    SYNTAX: cache_init(LRU / CLOCK / TWO_QUEUE / ARC, <capacity>);
 */
-generic_cache* cache_init(char* cacheName, int capacity) {
+generic_cache* cache_init(cacheType cacheName, int capacity) {
     if(capacity <= 0) {
         printf("Capacity must be greater than 0\n");
         return NULL;
     }
     generic_cache* cache = (generic_cache*) malloc(sizeof(generic_cache));
-    strcpy(cache->cacheName, cacheName);
-    if(strcmp(cacheName, "lru") == 0) {
+    cache->cacheName = cacheName;
+    if(cache->cacheName == LRU) {
         cache->cache = lru_init(capacity);
-    } else if(strcmp(cacheName, "clock") == 0) {
+    } else if(cache->cacheName == CLOCK) {
         cache->cache = clock_init(capacity);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
+    } else if(cache->cacheName == TWO_QUEUE) {
         cache->cache = two_queue_init(capacity);
-    } else if(strcmp(cacheName, "arc") == 0) {
+    } else if(cache->cacheName == ARC) {
         cache->cache = arc_init(capacity);
     } else {
         printf("Invalid Cache Type\n");
@@ -47,18 +47,15 @@ void cache_access(generic_cache* cache, int page) {
         printf("Cache cannot be NULL\n");
         return;
     }
-    generic_cache* genCache = (generic_cache*) cache;
-    char cacheName[10];
-    strcpy(cacheName, genCache->cacheName);
     // Code Review: Using if else ladder is fine but there is better and more readable way for this.
-    if(strcmp(cacheName, "lru") == 0) {
-        lru_access(genCache->cache, page);
-    } else if(strcmp(cacheName, "clock") == 0) {
-        clock_access(genCache->cache, page);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
-        two_queue_access(genCache->cache, page);
-    } else if(strcmp(cacheName, "arc") == 0) {
-        arc_access(genCache->cache, page);
+    if(cache->cacheName == LRU) {
+        lru_access(cache->cache, page);
+    } else if(cache->cacheName == CLOCK) {
+        clock_access(cache->cache, page);
+    } else if(cache->cacheName == TWO_QUEUE) {
+        two_queue_access(cache->cache, page);
+    } else if(cache->cacheName == ARC) {
+        arc_access(cache->cache, page);
     }
 }
 
@@ -71,17 +68,14 @@ void cache_analysis(generic_cache* cache) {
         printf("Cache cannot be NULL\n");
         return;
     }
-    generic_cache* genCache = (generic_cache*) cache;
-    char cacheName[10];
-    strcpy(cacheName, genCache->cacheName);
-    if(strcmp(cacheName, "lru") == 0) {
-        lru_analysis(genCache->cache);
-    } else if(strcmp(cacheName, "clock") == 0) {
-        clock_analysis(genCache->cache);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
-        two_queue_analysis(genCache->cache);
-    } else if(strcmp(cacheName, "arc") == 0) {
-        arc_analysis(genCache->cache);
+    if(cache->cacheName == LRU) {
+        lru_analysis(cache->cache);
+    } else if(cache->cacheName == CLOCK) {
+        clock_analysis(cache->cache);
+    } else if(cache->cacheName == TWO_QUEUE) {
+        two_queue_analysis(cache->cache);
+    } else if(cache->cacheName == ARC) {
+        arc_analysis(cache->cache);
     }
 }
 
@@ -91,17 +85,14 @@ void cache_put_array(generic_cache* cache, int pages[], int size) {
         printf("Cache cannot be NULL\n");
         return;
     }
-    generic_cache* genCache = (generic_cache*) cache;
-    char cacheName[10];
-    strcpy(cacheName, genCache->cacheName);
-    if(strcmp(cacheName, "lru") == 0) {
-        lru_put_array(genCache->cache, pages, size);
-    } else if(strcmp(cacheName, "clock") == 0) {
-        clock_put_array(genCache->cache, pages, size);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
-        two_queue_put_array(genCache->cache, pages, size);
-    } else if(strcmp(cacheName, "arc") == 0) {
-        arc_put_array(genCache->cache, pages, size);
+    if(cache->cacheName == LRU) {
+        lru_put_array(cache->cache, pages, size);
+    } else if(cache->cacheName == CLOCK) {
+        clock_put_array(cache->cache, pages, size);
+    } else if(cache->cacheName == TWO_QUEUE) {
+        two_queue_put_array(cache->cache, pages, size);
+    } else if(cache->cacheName == ARC) {
+        arc_put_array(cache->cache, pages, size);
     }
 }
 
@@ -111,17 +102,14 @@ void cache_print_buffer(generic_cache* cache) {
         printf("Cache cannot be NULL\n");
         return;
     }
-    generic_cache* genCache = (generic_cache*) cache;
-    char cacheName[10];
-    strcpy(cacheName, genCache->cacheName);
-    if(strcmp(cacheName, "lru") == 0) {
-        lru_print_buffer(genCache->cache);
-    } else if(strcmp(cacheName, "clock") == 0) {
-        clock_print_buffer(genCache->cache);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
-        two_queue_print_buffer(genCache->cache);
-    } else if(strcmp(cacheName, "arc") == 0) {
-        arc_print_buffer(genCache->cache);
+    if(cache->cacheName == LRU) {
+        lru_print_buffer(cache->cache);
+    } else if(cache->cacheName == CLOCK) {
+        clock_print_buffer(cache->cache);
+    } else if(cache->cacheName == TWO_QUEUE) {
+        two_queue_print_buffer(cache->cache);
+    } else if(cache->cacheName == ARC) {
+        arc_print_buffer(cache->cache);
     }
 }
 
@@ -131,17 +119,14 @@ void cache_destroy(generic_cache* cache) {
         printf("Cache cannot be NULL\n");
         return;
     }
-    generic_cache* genCache = (generic_cache*) cache;
-    char cacheName[10];
-    strcpy(cacheName, genCache->cacheName);
-    if(strcmp(cacheName, "lru") == 0) {
-        lru_destroy(genCache->cache);
-    } else if(strcmp(cacheName, "clock") == 0) {
-        clock_destroy(genCache->cache);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
-        two_queue_destroy(genCache->cache);
-    } else if(strcmp(cacheName, "arc") == 0) {
-        arc_destroy(genCache->cache);
+    if(cache->cacheName == LRU) {
+        lru_destroy(cache->cache);
+    } else if(cache->cacheName == CLOCK) {
+        clock_destroy(cache->cache);
+    } else if(cache->cacheName == TWO_QUEUE) {
+        two_queue_destroy(cache->cache);
+    } else if(cache->cacheName == ARC) {
+        arc_destroy(cache->cache);
     }
     free(cache);
 }
@@ -155,16 +140,13 @@ double cache_get_hit_ratio(generic_cache* cache) {
         printf("Cache cannot be NULL\n");
         return -1.0;
     }
-    generic_cache* genCache = (generic_cache*) cache;
-    char cacheName[10];
-    strcpy(cacheName, genCache->cacheName);
-    if(strcmp(cacheName, "lru") == 0) {
-        return lru_get_hit_ratio(genCache->cache);
-    } else if(strcmp(cacheName, "clock") == 0) {
-        return clock_get_hit_ratio(genCache->cache);
-    } else if(strcmp(cacheName, "two_queue") == 0) {
-        return two_queue_get_hit_ratio(genCache->cache);
-    } else if(strcmp(cacheName, "arc") == 0) {
-        return arc_get_hit_ratio(genCache->cache);
+    if(cache->cacheName == LRU) {
+        return lru_get_hit_ratio(cache->cache);
+    } else if(cache->cacheName == CLOCK) {
+        return clock_get_hit_ratio(cache->cache);
+    } else if(cache->cacheName == TWO_QUEUE) {
+        return two_queue_get_hit_ratio(cache->cache);
+    } else if(cache->cacheName == ARC) {
+        return arc_get_hit_ratio(cache->cache);
     }
 }
