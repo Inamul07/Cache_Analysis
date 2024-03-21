@@ -18,6 +18,7 @@ typedef struct cache_ generic_cache;
 
 typedef enum cacheType {LRU, CLOCK, TWO_QUEUE, ARC} cacheType;
 
+// Code Review: use typedef name
 generic_cache* cache_init(enum cacheType cacheName, int capacity);
 void cache_access(generic_cache* cache, int page);
 void cache_analysis(generic_cache* cache);

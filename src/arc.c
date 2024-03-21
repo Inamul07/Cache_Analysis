@@ -8,6 +8,7 @@
 #include "arc.h"
 #include "utils.h"
 
+// Code Review: Mention what each member do 
 struct arc {
     dbllist* t1;
     dbllist* t2;

@@ -42,6 +42,7 @@ string getFileName(int count, int accessPattern) {
 }
 
 static void BM_CACHE(benchmark::State &state) {
+    // Code Review: Read state params to meaningful variables first and use it later
     cacheType cacheName = (cacheType) state.range(2);
     generic_cache* cache = cache_init(cacheName, state.range(0));
     string filename = getFileName(state.range(1), state.range(3));
@@ -60,6 +61,8 @@ static void BM_CACHE(benchmark::State &state) {
     
 }
 
+// Code Review: Store cache sizes, data set size into vectors and use it.
+// Code Review: Make this into a single line... use loops
 BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("LRU_SEQ")->Complexity();
 BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("CLOCK_SEQ")->Complexity();
 BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_SEQ")->Complexity();

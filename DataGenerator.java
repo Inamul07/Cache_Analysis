@@ -1,3 +1,4 @@
+// Code Review: Write comments
 import java.io.FileWriter;
 
 public class DataGenerator {
