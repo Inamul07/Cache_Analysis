@@ -1,5 +1,7 @@
-// This header file, "dbllist.h", contains the function definitions that are required to implement a Doubly Linked List.
-// The function implementations or these methods can be found in lib/dbllist/dbllist.c
+/*
+ * This header file, "dbllist.h", contains the function definitions that are required to implement a Doubly Linked List.
+ * The function implementations or these methods can be found in lib/dbllist/dbllist.c
+*/
 
 #ifndef DBLLIST_H
 #define DBLLIST_H
@@ -25,8 +27,8 @@ int dbllist_peek_tail_val(dbllist* list);
 void dbllist_print(dbllist* list);
 void dbllist_destroy(dbllist* list);
 
-// WORKING:
 /*
+WORKING:
     Let the variable name of the dbllist be list.
     NOTE: The actual head and tail values are for internal purposes only, so the user cannot access it.
     NOTE: The NODE_DEFAULT is the default value of the node (Minimum Integer Value).

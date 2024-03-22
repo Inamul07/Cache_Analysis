@@ -1,6 +1,8 @@
-// This header file, "myhashmap.h", acts as a wrapper file for the "hashmap.h" file.
-// The function implementations for these methods can be found in lib/hashmap/myhashmap.c
-// This file contains simplified function names and parameter values, that call the actual functions defined in the "hashmap.h" file.
+/*
+ * This header file, "myhashmap.h", acts as a wrapper file for the "hashmap.h" file.
+ * The function implementations for these methods can be found in lib/hashmap/myhashmap.c
+ * This file contains simplified function names and parameter values, that call the actual functions defined in the "hashmap.h" file.
+*/
 
 #ifndef MYHASHMAP_H
 #define MYHASHMAP_H

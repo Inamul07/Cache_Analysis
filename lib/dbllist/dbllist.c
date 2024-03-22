@@ -29,8 +29,10 @@ Node* node_create(int data, Node* prev, Node* next) {
     return node;
 }
 
-// Gets and returns the value of a given node.
-// If the passed node is NULL, it returns "default node value" (Minimum Integer Value).
+/*
+ * Gets and returns the value of a given node.
+ * If the passed node is NULL, it returns "default node value" (Minimum Integer Value).
+*/
 int node_val(Node* node) {
     if(node == NULL) {
         printf("Node is NULL\n");
@@ -48,11 +50,13 @@ void node_destroy(Node* node) {
     free(node);
 }
 
-// Creates and Initializes a Doubly Linked List
-// This method creates a list with 2 nodes, head and tail.
-// These nodes are used for internal purposes.
-// This nodes are initially set to NODE_DEFAULT value (Minimum Integer Value).
-// Returned List: [(NODE_DEFAULT) <-> (NODE_DEFAULT)] // [head <-> tail]
+/*
+ * Creates and Initializes a Doubly Linked List
+ * This method creates a list with 2 nodes, head and tail.
+ * These nodes are used for internal purposes.
+ * This nodes are initially set to NODE_DEFAULT value (Minimum Integer Value).
+ * Returned List: [(NODE_DEFAULT) <-> (NODE_DEFAULT)] // [head <-> tail]
+*/
 dbllist* dbllist_create() {
     dbllist* list = (dbllist*) malloc(sizeof(dbllist));
     list->head = node_create(NODE_DEFAULT, NULL, NULL);
@@ -66,10 +70,12 @@ dbllist* dbllist_create() {
 /*
     List = [(NODE_DEFAULT) <-> 10 <-> 20 <-> (NODE_DEFAULT)]
     Output = 2
-    NOTE: Eventhough the total size is 4, since the head and tail are used only for internal purposes, the size of list is 2. 
+
+ * NOTE: Eventhough the total size is 4, since the head and tail are used only for internal purposes, the size of list is 2. 
+
+ * Returns the size of the given DBL List.
+ * If the list is NULL. it returns -1
 */
-// Returns the size of the given DBL List.
-// If the list is NULL. it returns -1
 int dbllist_size(dbllist* list) {
     if(list == NULL) {
         printf("List is NULL\n");
@@ -83,10 +89,10 @@ int dbllist_size(dbllist* list) {
     dbllist_insert_at_tail(list, 30);
     After: [(NODE_DEFAULT) <-> 10 <-> 20 <-> 30 <-> (NODE_DEFAULT)]
 
+ * Creates and Inserts a Node with the given data to the tail of the DBL List
+ * NOTE: In User Terms, At tail actually means before tail (here). So the node is inserted between the tail and the node before the tail.
+ * Operation fails when list is NULL
 */
-// Creates and Inserts a Node with the given data to the tail of the DBL List
-// NOTE: In User Terms, At tail actually means before tail (here). So the node is inserted between the tail and the node before the tail.
-// Operation fails when list is NULL
 void dbllist_insert_at_tail(dbllist* list, int data) {
     if(list == NULL) {
         printf("List cannot be NULL\n");
@@ -100,10 +106,11 @@ void dbllist_insert_at_tail(dbllist* list, int data) {
     Before: [(NODE_DEFAULT) <-> 10 <-> 20 <-> (NODE_DEFAULT)]
     dbllist_insert_node_at_tail(list, [30]);  ~ 30 is node 
     After: [(NODE_DEFAULT) <-> 10 <-> 20 <-> 30 <-> (NODE_DEFAULT)]
+
+ * Inserts the given node to the tail of the DBL List
+ * NOTE: In User Terms, At tail actually means before tail (here). So the node is inserted between the tail and the node before the tail.
+ * Operation fails when list or node is NULL.
 */
-// Inserts the given node to the tail of the DBL List
-// NOTE: In User Terms, At tail actually means before tail (here). So the node is inserted between the tail and the node before the tail.
-// Operation fails when list or node is NULL.
 void dbllist_insert_node_at_tail(dbllist* list, Node* node) {
     if(list == NULL) {
         printf("%s cannot be NULL\n", !list && !node? "List & Node": (!list? "List": "Node"));
@@ -121,11 +128,12 @@ void dbllist_insert_node_at_tail(dbllist* list, Node* node) {
     List = [(NODE_DEFAULT) <-> 1 <-> 2 <-> 3 <-> (NODE_DEFAULT)]
     Output = 1
 
-    NOTE: The First value after NODE_DEFAULT is head (For User) so 1 is returned.
+ * NOTE: The First value after NODE_DEFAULT is head (For User) so 1 is returned.
+
+ * Returns the value of head Node
+ * NOTE: The head node mentioned here, means the node after the actual head.
+ * If the given list is null or if the list is empty it returns NODE_DEFAULT value (Minimum Integer Value)
 */
-// Returns the value of head Node
-// NOTE: The head node mentioned here, means the node after the actual head.
-// If the given list is null or if the list is empty it returns NODE_DEFAULT value (Minimum Integer Value)
 int dbllist_peek_head_val(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
@@ -138,11 +146,12 @@ int dbllist_peek_head_val(dbllist* list) {
     List = [(NODE_DEFAULT) <-> 1 <-> 2 <-> 3 <-> (NODE_DEFAULT)]
     Output = 3
 
-    NOTE: The Last value before NODE_DEFAULT is tail (For User) so 3 is returned.
+ * NOTE: The Last value before NODE_DEFAULT is tail (For User) so 3 is returned.
+
+ * Returns the value of the tail node
+ * NOTE: The tail node mentioned here, means the node before the actual tail.
+ * If the given list is null or if the list is empty it returns NODE_DEFAULT value (Minimum Integer Value)
 */
-// Returns the value of the tail node
-// NOTE: The tail node mentioned here, means the node before the actual tail.
-// If the given list is null or if the list is empty it returns NODE_DEFAULT value (Minimum Integer Value)
 int dbllist_peek_tail_val(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
@@ -156,11 +165,12 @@ int dbllist_peek_tail_val(dbllist* list) {
     dbllist_remove_head(list);
     After: [(NODE_DEFAULT) <-> 20 <-> 30 <-> (NODE_DEFAULT)]
 
-    NOTE: The First value after NODE_DEFAULT is head (For User) so Node[10] is removed.
+ * NOTE: The First value after NODE_DEFAULT is head (For User) so Node[10] is removed.
+
+ * Removes the head of the given DBL List and frees the memory allocated by it
+ * NOTE: The head node mentioned here, means the node after the actual head.
+ * If the given list is null or if the list is empty it returns false (i.e) 0.
 */
-// Removes the head of the given DBL List and frees the memory allocated by it
-// NOTE: The head node mentioned here, means the node after the actual head.
-// If the given list is null or if the list is empty it returns false (i.e) 0.
 bool dbllist_remove_head(dbllist* list) {
     if(list == NULL || list->size == 0) {
         printf(!list? "List cannot be NULL\n": "List is Empty\n");
@@ -179,9 +189,10 @@ bool dbllist_remove_head(dbllist* list) {
     Before: [(NODE_DEFAULT) <-> 10 <-> 20 <-> 30 <-> 40 <-> (NODE_DEFAULT)]
     dbllist_move_node_to_tail(list, [20]); ~ 20 is node
     After: [(NODE_DEFAULT) <-> 10 <-> 30 <-> 40 <-> 20 <-> (NODE_DEFAULT)]
+
+ * For a given node in a list, moves the node to the tail of the DBL List
+ * NOTE: In User Terms, tail means the node before the actual tail
 */
-// For a given node in a list, moves the node to the tail of the DBL List
-// NOTE: In User Terms, tail means the node before the actual tail
 void dbllist_move_node_to_tail(dbllist* list, Node* node) {
     if(list == NULL || node == NULL) {
         printf("%s cannot be NULL\n", !list && !node? "List & Node": (!list? "List": "Node"));
@@ -199,9 +210,10 @@ void dbllist_move_node_to_tail(dbllist* list, Node* node) {
     Before: [(NODE_DEFAULT) <-> 10 <-> 20 <-> 30 <-> 40 <-> (NODE_DEFAULT)]
     dbllist_remove_node(list, [20]);  ~ 20 is node
     After: [(NODE_DEFAULT) <-> 10 <-> 30 <-> 40 <-> (NODE_DEFAULT)]
+
+ * For a given node in a list, Removes the node from the list and frees the memory allocated by it
+ * This method removes the node from anywhere on the list.
 */
-// For a given node in a list, Removes the node from the list and frees the memory allocated by it
-// This method removes the node from anywhere on the list.
 bool dbllist_remove_node(dbllist* list, Node* node) {
     if(list == NULL || node == NULL) {
         printf("%s cannot be NULL\n", !list && !node? "List & Node": (!list? "List": "Node"));
@@ -219,9 +231,10 @@ bool dbllist_remove_node(dbllist* list, Node* node) {
 /*
     List: [(NODE_DEFAULT) <-> 10 <-> 20 <-> 30 <-> (NODE_DEFAULT)]
     Output: [10, 20, 30]
+
+ * Prints the list at that current state
+ * NOTE: This doesn't print the actual head and tail values (i.e) the nodes with NODE_DEFAULT values at start and end of the list.
 */
-// Prints the list at that current state
-// NOTE: This doesn't print the actual head and tail values (i.e) the nodes with NODE_DEFAULT values at start and end of the list.
 void dbllist_print(dbllist* list) {
     if(list == NULL) {
         printf("List cannot be NULL\n");

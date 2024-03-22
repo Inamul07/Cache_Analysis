@@ -1,11 +1,11 @@
 /*
-    This Header File, "lru.h", contains the function definitions that are required to implement the "Least Recently Used (LRU) algorithm".
-    The function implementations for these methods can be found in src/lru.c    
+ * This Header File, "lru.h", contains the function definitions that are required to implement the "Least Recently Used (LRU) algorithm".
+ * The function implementations for these methods can be found in src/lru.c    
     
-    LRU OVERVIEW:
-    If the requested page is not available in the cache, the LRU algorithm adds the page at the Most Recently Used (tail) position in the cache.
-    If the requested page is available in the cache, then the page is moved to the Most Recently Used (tail) position in the cache.
-    When cache size is full, the Least Recently Used (head) page is removed (evicted) from the cache.
+ * LRU OVERVIEW:
+ * If the requested page is not available in the cache, the LRU algorithm adds the page at the Most Recently Used (tail) position in the cache.
+ * If the requested page is available in the cache, then the page is moved to the Most Recently Used (tail) position in the cache.
+ * When cache size is full, the Least Recently Used (head) page is removed (evicted) from the cache.
 */
 
 #ifndef LRU_H_

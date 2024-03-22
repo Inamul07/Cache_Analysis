@@ -13,6 +13,10 @@ extern "C" {
     #include "cache_factory.h"
 }
 
+/*
+ * This methods reads the file then stores and returns the contents of the file as a vector.
+ * If the given file name is not found then it returns an empty vector.
+*/
 vector<int> getDataSet(string &filename) {
     ifstream file(filename);
     vector<int> dataSet;
@@ -30,6 +34,12 @@ vector<int> getDataSet(string &filename) {
     return dataSet;
 }
 
+/*
+ * This method takes count and access pattern as parameters and returns a file path.
+ * Example: If count = 100, accessPattern = SEQ
+    It returns data/file_seq_100.txt
+ * If invalid access pattern is passed, this returns an empty string
+*/
 string getFileName(int count, int accessPattern) {
     string prefix = "data/file_";
     string suffix = ".txt";
@@ -37,45 +47,107 @@ string getFileName(int count, int accessPattern) {
     if(accessPattern == SEQ) pattern = "seq";
     else if(accessPattern == LOOP) pattern = "loop";
     else if(accessPattern == RAND) pattern = "rand";
-    else pattern = "none";
+    else {
+        cout << "Invalid Access Pattern" << endl;
+        return "";
+    }
     return prefix + pattern + "_" + to_string(count) + suffix;
 }
 
-static void BM_CACHE(benchmark::State &state) {
-    // Code Review: Read state params to meaningful variables first and use it later
-    cacheType cacheName = (cacheType) state.range(2);
-    generic_cache* cache = cache_init(cacheName, state.range(0));
-    string filename = getFileName(state.range(1), state.range(3));
+/*
+ * Returns a string that can be used to name a benchmark for the given values.
+ * It takes cache size, number of reference pages, cache type and access pattern type as parameters.
+ * Example: If cacheSize = 10, numOfPages = 100, type = ARC, accessPattern = LOOP
+    It returns "ARC_LOOP/10/100".
+*/
+string getBenchmarkName(int cacheSize, int numOfPages, cacheType type, int accessPattern) {
+    string cacheName;
+    switch(type) {
+        case LRU:
+            cacheName = "LRU";
+            break;
+        case CLOCK:
+            cacheName = "CLOCK";
+            break;
+        case TWO_QUEUE:
+            cacheName = "TWO_QUEUE";
+            break;
+        case ARC:
+            cacheName = "ARC";
+            break;
+        default:
+            return "";
+    }
+
+    string pattern;
+    switch(accessPattern) {
+        case SEQ:
+            pattern = "_SEQ/";
+            break;
+        case LOOP:
+            pattern = "_LOOP/";
+            break;
+        case RAND:
+            pattern = "_RAND/";
+            break;
+        default:
+            return "";
+    }
+
+    return cacheName + pattern + to_string(cacheSize) + "/" + to_string(numOfPages);
+}
+
+// Benchmark Function
+static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cacheType cacheName, int accessPattern) {
+    generic_cache* cache = cache_init(cacheName, cacheSize);
+    string filename = getFileName(numOfPages, accessPattern);
     vector<int> pages = getDataSet(filename);
 
     for(auto _ : state) {
         cache_put_array(cache, pages.data(), pages.size());
     }
 
-    state.SetComplexityN(state.range(1));
-
     double hitRatio = cache_get_hit_ratio(cache) * 100.0;
-    state.counters["Hit Percent[%]"] = hitRatio;
+    state.counters["Hit Ratio[%]"] = hitRatio;
 
     cache_destroy(cache);
     
 }
 
-// Code Review: Store cache sizes, data set size into vectors and use it.
-// Code Review: Make this into a single line... use loops
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("LRU_SEQ")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("CLOCK_SEQ")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_SEQ")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {ARC}, {SEQ}})->Unit(benchmark::kMillisecond)->Name("ARC_SEQ")->Complexity();
+static void BM_SEP(benchmark::State &state) {
+    for(auto _ : state) {
+        
+    }
+}
 
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("LRU_LOOP")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("CLOCK_LOOP")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_LOOP")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {ARC}, {LOOP}})->Unit(benchmark::kMillisecond)->Name("ARC_LOOP")->Complexity();
+int main(int argv, char** args) {
 
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {LRU}, {RAND}})->Unit(benchmark::kMillisecond)->Name("LRU_RAND")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {CLOCK}, {RAND}})->Unit(benchmark::kMillisecond)->Name("CLOCK_RAND")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {TWO_QUEUE}, {RAND}})->Unit(benchmark::kMillisecond)->Name("TWO_QUEUE_RAND")->Complexity();
-BENCHMARK(BM_CACHE)->ArgsProduct({{100, 150, 200}, {10000, 100000, 1000000}, {ARC}, {RAND}})->Unit(benchmark::kMillisecond)->Name("ARC_RAND")->Complexity();
+    vector<int> cacheSizes = {100, 150, 200};
+    vector<int> pageCounts = {10000, 100000, 1000000};
+    vector<cacheType> cacheTypes = {LRU, CLOCK, TWO_QUEUE, ARC};
+    vector<int> accessPatterns = {SEQ, LOOP, RAND};
 
-BENCHMARK_MAIN();
+    for(int accessPattern : accessPatterns) {
+        for(cacheType cacheName : cacheTypes) {
+            for(int cacheSize : cacheSizes) {
+                for(int numOfPages : pageCounts) {
+                    // Registering a Benchmark with different cacheSize, numOfPages, cache and accessPattern
+                    benchmark::RegisterBenchmark(getBenchmarkName(cacheSize, numOfPages, cacheName, accessPattern), BM_CACHE, cacheSize, numOfPages, cacheName, accessPattern)
+                        ->Unit(benchmark::kMillisecond);
+                }
+            }
+            benchmark::RegisterBenchmark("SEPERATOR", BM_SEP)->Iterations(1);
+
+            // benchmark::BenchmarkReporter::Run run;
+            // vector<benchmark::BenchmarkReporter::Run> vec = {run};
+            // benchmark::ConsoleReporter reporter;
+            // reporter.ReportRuns(vec);
+        }
+    }
+
+    // Initialising the Benchmark
+    ::benchmark::Initialize(&argv, args);
+
+    // Running the Registered Benchmarks
+    ::benchmark::RunSpecifiedBenchmarks();
+}

@@ -10,22 +10,46 @@
 
 // Code Review: Mention what each member do 
 struct arc {
+    /*
+     * T1 Buffer (DBL List + Hashmap)
+     * Attempts to keep exactly (p) pages in the cache.
+     * Keeps (p) most recent pages in the cache.
+    */
     dbllist* t1;
-    dbllist* t2;
-    dbllist* b1;
-    dbllist* b2;
     hashmap* t1Map;
+
+    /*
+     * T2 Buffer (DBL List + Hashmap)
+     * Attempts to keep exactly (capacity - p) pages in cache.
+     * keeps (c - p) most frequemt pages in the cache.
+    */
+    dbllist* t2;
     hashmap* t2Map;
+
+    /*
+     * B1 Buffer (DBL List + Hashmap)
+     * This is a Ghost Cache (i.e) stores history of (evicted) pages from the T1 Buffer.
+    */
+    dbllist* b1;
     hashmap* b1Map;
+
+    /*
+     * B2 Buffer (DBL List + Hashmap)
+     * This is a Ghost Cache (i.e) stores history of (evicted) pages from the T2 Buffer.
+    */
+    dbllist* b2;
     hashmap* b2Map;
+
+    // Tunable parameter that adjusts the size of T1 & T2 Buffers
     int p;
-    int capacity;
-    int hitCount, missCount;
+
+    int capacity; // Cache Size
+    int hitCount, missCount; // Keeps track of number of hits and misses
 };
 
 /*
-    Initializes the ARC cache
-    If capacity is less than 1. Returns NULL
+ * Initializes the ARC cache
+ * If capacity is less than 1. Returns NULL
 */
 arc_cache* arc_init(int capacity) {
     if(capacity <= 0) {
@@ -76,11 +100,17 @@ void perform_replace(arc_cache* cache, int page) {
 }
 
 /*
-    Performs ARC Cache operation on the cache with the given page.
-    This algorithm contains Four Lists: T1, T2, B1, B2
-    The lists T1 & T2 are considered as cache. While, B1 & B2 (Ghost Caches) stores the history of (evicted) pages.
-    T1 & B1 Lists are together known as L1 and T2 & B2 Lists are together known as L2.
-    Refer the ARC algorithm from its research paper. (Given in the "References" section in README).
+ * Performs ARC Cache operation on the cache with the given page.
+ * This algorithm contains Four Lists: T1, T2, B1, B2
+ * The lists T1 & T2 are considered as cache. While, B1 & B2 (Ghost Caches) stores the history of (evicted) pages.
+ * T1 & B1 Lists are together known as L1 and T2 & B2 Lists are together known as L2.
+ * The T1 Buffer favours Recency and the T2 Buffer favours Frequency.
+ * ARC specifies a Tunable Parameter, p, which defines the size of Buffers T1 & T2.
+ * The Tunable Parameter, p, is updated only when there is a hit in the Ghost Caches (B1 & B2 Buffers).
+ * When there is a hit in B1, The p value is increased (increment by 1, if B1 >= B2, else increment by a factor of B2 (i.e) B2/B1)
+ * Wnen there is a hit in B2, The p value is decreased (decrement by 1, if B2 >= B1, else decrement by a factor of B1 (i.e) B1/B2)
+ * If the p value is greater, it allows more recent pages into the cache.
+ * If the p value is smaller, it allows more frequent pages into the cache.
 */
 void arc_access(arc_cache* cache, int page) {
     if(cache == NULL) {
@@ -193,8 +223,8 @@ void arc_print_buffer(arc_cache* cache) {
 }
 
 /*
-    Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
-    Reference count must be atleast one before calling this method.
+ * Prints the Buffer, Total Reference Count, Hit Count and Miss Count of the cache at that current state.
+ * Reference count must be atleast one before calling this method.
 */
 void arc_analysis(arc_cache* cache) {
     if(cache == NULL) {
@@ -210,8 +240,8 @@ void arc_analysis(arc_cache* cache) {
 }
 
 /*
-    Performs ARC cache operation for each element, from the array, in a linear fashion
-    This method calls the arc_access() method for each page in the array
+ * Performs ARC cache operation for each element, from the array, in a linear fashion
+ * This method calls the arc_access() method for each page in the array
 */
 void arc_put_array(arc_cache* cache, int pages[], int size) {
     if(cache == NULL) {
@@ -241,8 +271,8 @@ void arc_destroy(arc_cache* cache) {
 }
 
 /*
-    Calculates and returns the hit ratio at that current state.
-    Returns 0, if the cache is NULL or if there were no references before
+ * Calculates and returns the hit ratio at that current state.
+ * Returns 0, if the cache is NULL or if there were no references before
 */
 double arc_get_hit_ratio(arc_cache* cache) {
     if(cache == NULL || cache->missCount == 0) {

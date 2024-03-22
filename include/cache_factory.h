@@ -1,14 +1,14 @@
 /*
-    This header file, "cache_factory.h", is similar to a factory method.
-    The function implementations for these methods can be found in src/cache_factory.c
+ * This header file, "cache_factory.h", is similar to a factory method.
+ * The function implementations for these methods can be found in src/cache_factory.c
 
-    Use this file to run any of the available cache replacemnt algorithms by passing the appropriate cache name in the cache_init() method.
+ * Use this file to run any of the available cache replacemnt algorithms by passing the appropriate cache name in the cache_init() method.
 
-    Implemented Cache Replacement Policies:
-        - Least Recently Used (LRU)
-        - Clock Page Replacement (CLOCK)
-        - 2Q Page Replacement (TWO_QUEUE)
-        - Adaptive Replacement Cache (ARC)
+ * Implemented Cache Replacement Policies:
+    - Least Recently Used (LRU)
+    - Clock Page Replacement (CLOCK)
+    - 2Q Page Replacement (TWO_QUEUE)
+    - Adaptive Replacement Cache (ARC)
 */
 
 #ifndef CACHE_FACTORY_H
@@ -18,8 +18,7 @@ typedef struct cache_ generic_cache;
 
 typedef enum cacheType {LRU, CLOCK, TWO_QUEUE, ARC} cacheType;
 
-// Code Review: use typedef name
-generic_cache* cache_init(enum cacheType cacheName, int capacity);
+generic_cache* cache_init(cacheType cacheName, int capacity);
 void cache_access(generic_cache* cache, int page);
 void cache_analysis(generic_cache* cache);
 void cache_put_array(generic_cache* cache, int pages[], int size);

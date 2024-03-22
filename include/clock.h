@@ -1,14 +1,14 @@
 /*
-    This Header File, "clock.h", contains the function definitions that are required to implement the "Clock Replacement algorithm".
-    The function implementations for these methods can be found in src/clock.c 
-    
-    CLOCK OVERVIEW:
-    This algorithm contains a clock hand (currIdx) that points to a page in the cache.
-    Each page in cache has an additional reference bit.
-    If the refernced page is in cache, its reference bit is set to one.
-    If the page is not in the cache, and if the reference bit of the page pointed by the clock hand is 1, it is set to zero and the clock hand moves to the next block in cache.
-    This step is repeated until the clock hand finds a page with a reference bit of 0. 
-    Then the page is replaced with the referenced page and the reference bit of that pages is set to 1.
+ * This Header File, "clock.h", contains the function definitions that are required to implement the "Clock Replacement algorithm".
+ * The function implementations for these methods can be found in src/clock.c 
+
+ * CLOCK OVERVIEW:
+ * This algorithm contains a clock hand (currIdx) that points to a page in the cache.
+ * Each page in cache has an additional reference bit.
+ * If the refernced page is in cache, its reference bit is set to one.
+ * If the page is not in the cache, and if the reference bit of the page pointed by the clock hand is 1, it is set to zero and the clock hand moves to the next block in cache.
+ * This step is repeated until the clock hand finds a page with a reference bit of 0. 
+ * Then the page is replaced with the referenced page and the reference bit of that pages is set to 1.
 */
 
 #ifndef CLOCK_H_
