@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <time.h>
 
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
@@ -45,6 +46,8 @@ struct arc {
 
     int capacity; // Cache Size
     int hitCount, missCount; // Keeps track of number of hits and misses
+
+    double totalHashmapTime;
 };
 
 /*
@@ -69,6 +72,7 @@ arc_cache* arc_init(int capacity) {
     cache->capacity = capacity;
     cache->hitCount = 0;
     cache->missCount = 0;
+    cache->totalHashmapTime = 0;
     return cache;
 }
 
@@ -85,17 +89,18 @@ int min(int a, int b) {
 // Replace method as decribed in the research paper.
 void perform_replace(arc_cache* cache, int page) {
     int t1Size = dbllist_size(cache->t1);
+    clock_t start = clock();
     if(t1Size > 0 && (t1Size > cache->p || (hmap_contains(cache->b2Map, page) && t1Size == cache->p))) {
-
+        cache->totalHashmapTime += end_clock_time(start);
         // Move the Least Recently Used (head) of T1 to Most Recently Used (head) of B1.
         int headVal = util_peek_head_value_and_remove(cache->t1, cache->t1Map);
-        util_insert_node_at_tail_and_map(headVal, cache->b1, cache->b1Map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(headVal, cache->b1, cache->b1Map);
     } 
     else {
-
+        cache->totalHashmapTime += end_clock_time(start);
         // Move the Least Recently Used (head) of T2 to Most Recently Used (head) of B2.
         int headVal = util_peek_head_value_and_remove(cache->t2, cache->t2Map);
-        util_insert_node_at_tail_and_map(headVal, cache->b2, cache->b2Map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(headVal, cache->b2, cache->b2Map);
     }
 }
 
@@ -117,22 +122,23 @@ void arc_access(arc_cache* cache, int page) {
         printf("Cache cannot be null\n");
         return;
     }
+    clock_t start = clock();
     if(hmap_contains(cache->t1Map, page)) { // Page in T1 (hit)
-
+        cache->totalHashmapTime += end_clock_time(start);
         // Promote the page to T2 List.
-        util_remove_from_list_and_map(page, cache->t1, cache->t1Map);
-        util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
+        cache->totalHashmapTime += util_remove_from_list_and_map(page, cache->t1, cache->t1Map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
         cache->hitCount++;
     } 
     else if(hmap_contains(cache->t2Map, page)) { // Page in T2 (hit)
-
+        cache->totalHashmapTime += end_clock_time(start);
         // Move the page to the Most Recently Used (tail) position
         Node* node = hmap_get(cache->t2Map, page);
         dbllist_move_node_to_tail(cache->t2, node);
         cache->hitCount++;
     } 
     else if(hmap_contains(cache->b1Map, page)) { // Page in B1 (miss)
-
+        cache->totalHashmapTime += end_clock_time(start);
         // Update P Value
         int b1Size = dbllist_size(cache->b1), b2Size = dbllist_size(cache->b2);
         int delta = 1;
@@ -144,12 +150,12 @@ void arc_access(arc_cache* cache, int page) {
         perform_replace(cache, page);
 
         // Move the Page from B1 List to Most Recently Used (tail) Position of the T2 List.
-        util_remove_from_list_and_map(page, cache->b1, cache->b1Map);
-        util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
+        cache->totalHashmapTime += util_remove_from_list_and_map(page, cache->b1, cache->b1Map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
         cache->missCount++;
     } 
     else if(hmap_contains(cache->b2Map, page)) { // Page in B2 (miss)
-
+        cache->totalHashmapTime += end_clock_time(start);
         // Update P Value
         int b1Size = dbllist_size(cache->b1), b2Size = dbllist_size(cache->b2);
         int delta = 1;
@@ -161,11 +167,12 @@ void arc_access(arc_cache* cache, int page) {
         perform_replace(cache, page);
 
         // Move the Page from B2 List to Most Recently Used (tail) Position of the T2 List.
-        util_remove_from_list_and_map(page, cache->b2, cache->b2Map);
-        util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
+        cache->totalHashmapTime += util_remove_from_list_and_map(page, cache->b2, cache->b2Map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->t2, cache->t2Map);
         cache->missCount++;
     } 
     else { // Page not in any List (miss)
+        cache->totalHashmapTime += end_clock_time(start);
         int t1Size = dbllist_size(cache->t1);
         int t2Size = dbllist_size(cache->t2);
         int b1Size = dbllist_size(cache->b1);
@@ -200,7 +207,7 @@ void arc_access(arc_cache* cache, int page) {
         }
 
         // Insert the page at the Most Recently Used (tail) position of the T1 List.
-        util_insert_node_at_tail_and_map(page, cache->t1, cache->t1Map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->t1, cache->t1Map);
         cache->missCount++;
     }
 }
@@ -282,4 +289,12 @@ double arc_get_hit_ratio(arc_cache* cache) {
     int totalReference = cache->hitCount + cache->missCount;
     double hitRatio = (cache->hitCount * 1.0) / (totalReference);
     return hitRatio;
+}
+
+double arc_get_hashmap_time(arc_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be NULL\n");
+        return 0;
+    }
+    return cache->totalHashmapTime;
 }

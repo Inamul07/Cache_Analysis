@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
@@ -9,14 +10,22 @@
 #include "two_queue.h"
 
 struct two_queue {
+    // Am Buffer (LRU List)
     dbllist* am;
-    dbllist* a1in;
-    dbllist* a1out;
     hashmap* amMap;
+
+    // A1In Buffer (FIFO List)
+    dbllist* a1in;
     hashmap* a1inMap;
+
+    // A1Out Buffer (FIFO List)
+    dbllist* a1out;
     hashmap* a1outMap;
-    int amSize, a1inSize, a1outSize;
-    int hitCount, missCount;
+
+    int amSize, a1inSize, a1outSize; // Total Sizes of the buffers
+    int hitCount, missCount; // Keeps track of number of hits and misses
+
+    double totalHashmapTime;
 };
 
 /*
@@ -43,6 +52,8 @@ two_queue_cache* two_queue_init(int capacity) {
     cache->a1outSize = a1outSize;
     cache->hitCount = 0;
     cache->missCount = 0;
+    cache->totalHashmapTime = 0;
+    return cache;
 }
 
 /*
@@ -58,20 +69,27 @@ void two_queue_access(two_queue_cache* cache, int page) {
         printf("Cache cannot be null\n");
         return;
     }
-    if(hmap_contains(cache->amMap, page)) { // page in Am (hit)
 
+    clock_t start = clock();
+    if(hmap_contains(cache->amMap, page)) { // page in Am (hit)
+        cache->totalHashmapTime += end_clock_time(start);
         // The page is moved to the Most Recently Used (tail) Position.
+        start = clock();
         Node* node = hmap_get(cache->amMap, page);
+        cache->totalHashmapTime += end_clock_time(start);
+
         dbllist_move_node_to_tail(cache->am, node);
         cache->hitCount++;
     } 
     else if(hmap_contains(cache->a1inMap, page)) { // page in A1In (hit)
+        cache->totalHashmapTime += end_clock_time(start);
         cache->hitCount++;
     } 
     else if(hmap_contains(cache->a1outMap, page)) { // page in A1Out (miss)
-
+        cache->totalHashmapTime += end_clock_time(start);
+        
         // Remove the page from A1Out
-        util_remove_from_list_and_map(page, cache->a1out, cache->a1outMap);
+        cache->totalHashmapTime += util_remove_from_list_and_map(page, cache->a1out, cache->a1outMap);
 
         int amCurrSize = dbllist_size(cache->am);
         if(amCurrSize == cache->amSize) {
@@ -81,9 +99,10 @@ void two_queue_access(two_queue_cache* cache, int page) {
         }
 
         // Insert the page to Most Recently Used (tail) position of Am.
-        util_insert_node_at_tail_and_map(page, cache->am, cache->amMap);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->am, cache->amMap);
         cache->missCount++;
     } else { // Page not in Cache (miss)
+        cache->totalHashmapTime += end_clock_time(start);
         int a1inCurrSize = dbllist_size(cache->a1in);
         if(a1inCurrSize == cache->a1inSize) {
 
@@ -97,11 +116,11 @@ void two_queue_access(two_queue_cache* cache, int page) {
                 util_peek_head_value_and_remove(cache->a1out, cache->a1outMap);
             }
 
-            util_insert_node_at_tail_and_map(headVal, cache->a1out, cache->a1outMap);
+            cache->totalHashmapTime += util_insert_node_at_tail_and_map(headVal, cache->a1out, cache->a1outMap);
         }
 
         // Insert the page at the end (tail) of A1In.
-        util_insert_node_at_tail_and_map(page, cache->a1in, cache->a1inMap);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->a1in, cache->a1inMap);
 
         cache->missCount++;
     }
@@ -179,4 +198,12 @@ double two_queue_get_hit_ratio(two_queue_cache* cache) {
     int totalReference = cache->hitCount + cache->missCount;
     double hitRatio = (cache->hitCount * 1.0) / (totalReference);
     return hitRatio;
+}
+
+double two_queue_get_hashmap_time(two_queue_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be NULL\n");
+        return 0;
+    }
+    return cache->totalHashmapTime;
 }

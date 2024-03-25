@@ -17,6 +17,7 @@ struct cache_ {
     void (*print_buffer)(void* cache);
     void (*destroy)(void* cache);
     double (*get_hit_ratio)(void* cache);
+    double (*get_hashmap_time)(void* cache);
 };
 
 /*
@@ -35,6 +36,7 @@ generic_cache* cache_init(cacheType cacheName, int capacity) {
             cache->print_buffer = (void (*)(void*)) lru_print_buffer;
             cache->destroy = (void (*)(void*)) lru_destroy;
             cache->get_hit_ratio = (double (*)(void*)) lru_get_hit_ratio;
+            cache->get_hashmap_time = (double (*)(void*)) lru_get_hashmap_time;
             break;
         case CLOCK:
             cache->init = (void* (*)(int)) clock_init;
@@ -44,6 +46,7 @@ generic_cache* cache_init(cacheType cacheName, int capacity) {
             cache->print_buffer = (void (*)(void*)) clock_print_buffer;
             cache->destroy = (void (*)(void*)) clock_destroy;
             cache->get_hit_ratio = (double (*)(void*)) clock_get_hit_ratio;
+            cache->get_hashmap_time = (double (*)(void*)) clock_get_hashmap_time;
             break;
         case TWO_QUEUE:
             cache->init = (void* (*)(int)) two_queue_init;
@@ -53,6 +56,7 @@ generic_cache* cache_init(cacheType cacheName, int capacity) {
             cache->print_buffer = (void (*)(void*)) two_queue_print_buffer;
             cache->destroy = (void (*)(void*)) two_queue_destroy;
             cache->get_hit_ratio = (double (*)(void*)) two_queue_get_hit_ratio;
+            cache->get_hashmap_time = (double (*)(void*)) two_queue_get_hashmap_time;
             break;
         case ARC:
             cache->init = (void* (*)(int)) arc_init;
@@ -62,6 +66,7 @@ generic_cache* cache_init(cacheType cacheName, int capacity) {
             cache->print_buffer = (void (*)(void*)) arc_print_buffer;
             cache->destroy = (void (*)(void*)) arc_destroy;
             cache->get_hit_ratio = (double (*)(void*)) arc_get_hit_ratio;
+            cache->get_hashmap_time = (double (*)(void*)) arc_get_hashmap_time;
             break;
         default:
             cache = NULL;
@@ -133,4 +138,12 @@ double cache_get_hit_ratio(generic_cache* cache) {
         return 0;
     }
     cache->get_hit_ratio(cache->cache);
+}
+
+double cache_get_hashmap_time(generic_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be NULL\n");
+        return 0;
+    }
+    cache->get_hashmap_time(cache->cache);
 }

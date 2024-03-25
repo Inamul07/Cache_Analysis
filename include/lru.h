@@ -20,5 +20,6 @@ void lru_put_array(lru_cache* cache, int pages[], int size);
 void lru_print_buffer(lru_cache* cache);
 void lru_destroy(lru_cache* cache);
 double lru_get_hit_ratio(lru_cache* cache);
+double lru_get_hashmap_time(lru_cache* cache);
 
 #endif

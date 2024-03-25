@@ -110,6 +110,8 @@ static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cac
     double hitRatio = cache_get_hit_ratio(cache) * 100.0;
     state.counters["Hit Ratio[%]"] = hitRatio;
 
+    state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache) * 1000) / state.iterations();
+
     cache_destroy(cache);
     
 }
@@ -137,11 +139,6 @@ int main(int argv, char** args) {
                 }
             }
             benchmark::RegisterBenchmark("SEPERATOR", BM_SEP)->Iterations(1);
-
-            // benchmark::BenchmarkReporter::Run run;
-            // vector<benchmark::BenchmarkReporter::Run> vec = {run};
-            // benchmark::ConsoleReporter reporter;
-            // reporter.ReportRuns(vec);
         }
     }
 

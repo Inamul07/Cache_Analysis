@@ -25,6 +25,6 @@ void cache_put_array(generic_cache* cache, int pages[], int size);
 void cache_print_buffer(generic_cache* cache);
 void cache_destroy(generic_cache* cache);
 double cache_get_hit_ratio(generic_cache* cache);
-
+double cache_get_hashmap_time(generic_cache* cache);
 
 #endif

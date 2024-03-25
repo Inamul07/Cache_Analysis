@@ -24,5 +24,7 @@ void clock_print_buffer(clock_cache* cache);
 void clock_put_array(clock_cache* cache, int pages[], int size);
 void clock_destroy(clock_cache* cache);
 double clock_get_hit_ratio(clock_cache* cache);
+double clock_get_hashmap_time(clock_cache* cache);
+
 
 #endif

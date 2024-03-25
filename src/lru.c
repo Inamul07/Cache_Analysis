@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <time.h>
 
 #include "hashmap/myhashmap.h"
 #include "dbllist/dbllist.h"
@@ -17,6 +18,8 @@ struct lru_cache_ {
     int currSize; // Current Size of the Cache
     int capacity; // Total Cache Size
     int hitCount, missCount; // Keeps track of number of hits and misses
+
+    double totalHashmapTime;
 };
 
 /*
@@ -35,6 +38,8 @@ lru_cache* lru_init(int capacity) {
     cache->capacity = capacity;
     cache->hitCount = 0;
     cache->missCount = 0;
+    cache->totalHashmapTime = 0;
+    return cache;
 }
 
 /*
@@ -48,14 +53,20 @@ void lru_access(lru_cache* cache, int page) {
         printf("Cache cannot be null\n");
         return;
     }
-    if(hmap_contains(cache->map, page)) { // page in cache (hit)
 
+    clock_t start = clock();
+    if(hmap_contains(cache->map, page)) { // page in cache (hit)
+        cache->totalHashmapTime += end_clock_time(start);
         // Move the page to Most Recently Used (tail) Position
+        start = clock();
         Node* node = hmap_get(cache->map, page);
+        cache->totalHashmapTime += end_clock_time(start);
+        
         dbllist_move_node_to_tail(cache->list, node);
         cache->hitCount++;
     } 
     else { // Page not in cache
+        cache->totalHashmapTime += end_clock_time(start);
         if(cache->currSize == cache->capacity) {
 
             // Cache is Full, Remove the Least Recently Used (head) page from the cache.
@@ -63,7 +74,7 @@ void lru_access(lru_cache* cache, int page) {
             cache->currSize--;
         }
         // Insert the page at the Most Recently Used (tail) position
-        util_insert_node_at_tail_and_map(page, cache->list, cache->map);
+        cache->totalHashmapTime += util_insert_node_at_tail_and_map(page, cache->list, cache->map);
         cache->currSize++;
         cache->missCount++;
     }
@@ -132,4 +143,12 @@ double lru_get_hit_ratio(lru_cache* cache) {
     int totalReference = cache->hitCount + cache->missCount;
     double hitRatio = (cache->hitCount * 1.0) / (totalReference);
     return hitRatio;
+}
+
+double lru_get_hashmap_time(lru_cache* cache) {
+    if(cache == NULL) {
+        printf("Cache cannot be NULL\n");
+        return 0;
+    }
+    return cache->totalHashmapTime;
 }
