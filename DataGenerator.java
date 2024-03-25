@@ -1,4 +1,3 @@
-// Code Review: Write comments
 import java.io.FileWriter;
 
 public class DataGenerator {
@@ -7,7 +6,7 @@ public class DataGenerator {
      * This method performs write operation.
      * This method gets a filename and an integer array as parameters.
      * Creates a file (if not present) or Overwrites a file (if already present).
-     * Puts each value of the array in a single column of the file.
+     * Puts each value of the array in a single line of the file.
      */
     private static void writeToFile(String filename, int[] arr) {
         try {

@@ -40,6 +40,7 @@ vector<int> getDataSet(string &filename) {
     It returns data/file_seq_100.txt
  * If invalid access pattern is passed, this returns an empty string
 */
+// Code_Review: make accessPattern enum
 string getFileName(int count, int accessPattern) {
     string prefix = "data/file_";
     string suffix = ".txt";
@@ -49,6 +50,7 @@ string getFileName(int count, int accessPattern) {
     else if(accessPattern == RAND) pattern = "rand";
     else {
         cout << "Invalid Access Pattern" << endl;
+        //Code_Review: Exit here
         return "";
     }
     return prefix + pattern + "_" + to_string(count) + suffix;
@@ -109,7 +111,7 @@ static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cac
 
     double hitRatio = cache_get_hit_ratio(cache) * 100.0;
     state.counters["Hit Ratio[%]"] = hitRatio;
-
+    // Code Review: avg needed?
     state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache) * 1000) / state.iterations();
 
     cache_destroy(cache);
@@ -121,6 +123,7 @@ static void BM_SEP(benchmark::State &state) {
     for(auto _ : state) {
         
     }
+    // Code Review: just return?
 }
 
 int main(int argv, char** args) {
