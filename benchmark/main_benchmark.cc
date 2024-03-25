@@ -116,6 +116,7 @@ static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cac
     
 }
 
+// A Helper Benchmark To Seperate between the Cache Benchmarks...
 static void BM_SEP(benchmark::State &state) {
     for(auto _ : state) {
         
@@ -133,7 +134,7 @@ int main(int argv, char** args) {
         for(cacheType cacheName : cacheTypes) {
             for(int cacheSize : cacheSizes) {
                 for(int numOfPages : pageCounts) {
-                    // Registering a Benchmark with different cacheSize, numOfPages, cache and accessPattern
+                    // Registering a Benchmark with different cacheSize, numOfPages, cacheName and accessPattern
                     benchmark::RegisterBenchmark(getBenchmarkName(cacheSize, numOfPages, cacheName, accessPattern), BM_CACHE, cacheSize, numOfPages, cacheName, accessPattern)
                         ->Unit(benchmark::kMillisecond);
                 }

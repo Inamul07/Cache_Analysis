@@ -38,6 +38,11 @@ double util_remove_from_list_and_map(int data, dbllist* list, hashmap* map) {
     return time;
 }
 
+/*
+ * This method gets start time as parameter.
+ * Returns the time elapsed from start till now.
+ * Returns the time in seconds.
+*/
 double end_clock_time(clock_t start) {
     clock_t end = clock();
     return ((double) (end - start)) / CLOCKS_PER_SEC;

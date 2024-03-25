@@ -140,6 +140,11 @@ double cache_get_hit_ratio(generic_cache* cache) {
     cache->get_hit_ratio(cache->cache);
 }
 
+/*
+ * This method returns the total time taken by hashmap during the lifetime of the cache.
+ * Returns the total time in seconds.
+ * Returns 0, if the cache is NULL
+*/
 double cache_get_hashmap_time(generic_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");

@@ -205,6 +205,11 @@ double clock_get_hit_ratio(clock_cache* cache) {
     return hitRatio;
 }
 
+/*
+ * This method returns the total time taken by hashmap during the lifetime of the cache.
+ * Returns the total time in seconds.
+ * Returns 0, if the cache is NULL
+*/
 double clock_get_hashmap_time(clock_cache* cache) {
     if(cache == NULL) {
         printf("Cache cannot be NULL\n");
