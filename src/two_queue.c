@@ -25,7 +25,7 @@ struct two_queue {
     int amSize, a1inSize, a1outSize; // Total Sizes of the buffers
     int hitCount, missCount; // Keeps track of number of hits and misses
 
-    double totalHashmapTime;
+    double totalHashmapTime; // Maintains total time taken by hashmap operations
 };
 
 /*

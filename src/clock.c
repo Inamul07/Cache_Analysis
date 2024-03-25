@@ -25,7 +25,7 @@ struct clock_cache_ {
     int capacity; // Total Cache Size
     int hitCount, missCount; // Keeps track of number of hits and misses
 
-    double totalHashmapTime;
+    double totalHashmapTime; // Maintains total time taken by hashmap operations
 };
 
 /*

@@ -9,7 +9,6 @@
 #include "arc.h"
 #include "utils.h"
 
-// Code Review: Mention what each member do 
 struct arc {
     /*
      * T1 Buffer (DBL List + Hashmap)
@@ -47,7 +46,7 @@ struct arc {
     int capacity; // Cache Size
     int hitCount, missCount; // Keeps track of number of hits and misses
 
-    double totalHashmapTime;
+    double totalHashmapTime; // Maintains total time taken by hashmap operations
 };
 
 /*
