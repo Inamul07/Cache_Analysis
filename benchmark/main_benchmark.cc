@@ -112,10 +112,15 @@ static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cac
     double hitRatio = cache_get_hit_ratio(cache) * 100.0;
     state.counters["Hit Ratio[%]"] = hitRatio;
     // Code Review: avg needed?
-    state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache) * 1000) / state.iterations();
+    state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache)) / state.iterations();
 
     cache_destroy(cache);
     
+    // if(cacheSize == 100 && numOfPages == 10000 && !(cacheName == LRU && accessPattern == SEQ)) {
+    //     cout << "------------------------------------------------------------------------------------------------------------" << endl;
+    //     cout << "Benchmark                                        Time             CPU   Iterations Hashmap Time Hit Ratio[%]" << endl;
+    //     cout << "------------------------------------------------------------------------------------------------------------" << endl;
+    // }
 }
 
 // A Helper Benchmark To Seperate between the Cache Benchmarks...

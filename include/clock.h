@@ -26,5 +26,4 @@ void clock_destroy(clock_cache* cache);
 double clock_get_hit_ratio(clock_cache* cache);
 double clock_get_hashmap_time(clock_cache* cache);
 
-
 #endif

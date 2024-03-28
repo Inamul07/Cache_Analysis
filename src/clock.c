@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
 
 #include "hashmap/myhashmap.h"
 
@@ -18,14 +17,12 @@ struct clock_cache_ {
 
     // Array of Clock Nodes & HashMap to check if the node is in cache.
     clock_node** cache;
-    struct hashmap* map;
+    hashmap* map;
     
     int currIdx; // Clock Hand
     int currSize; // Current Size of the Cache
     int capacity; // Total Cache Size
     int hitCount, missCount; // Keeps track of number of hits and misses
-
-    double totalHashmapTime; // Maintains total time taken by hashmap operations
 };
 
 /*
@@ -48,7 +45,6 @@ clock_cache* clock_init(int capacity) {
     cache->capacity = capacity;
     cache->hitCount = 0;
     cache->missCount = 0;
-    cache->totalHashmapTime = 0;
     return cache;
 }
 
@@ -73,20 +69,12 @@ void clock_access(clock_cache* cache, int data) {
         return;
     }
 
-    clock_t start = clock();
-
     if(hmap_contains(cache->map, data)) { // hit
-        cache->totalHashmapTime += end_clock_time(start);
-
         // Setting the reference bit to 1
-        start = clock();
         int* page_idx = hmap_get(cache->map, data);
-        cache->totalHashmapTime += end_clock_time(start);
-
         cache->cache[*page_idx]->rBit = 1;
         cache->hitCount++;
     } else { // miss
-        cache->totalHashmapTime += end_clock_time(start);
         if(cache->currSize == cache->capacity) {
 
             // Cache is Full, Move the clock hand till it finds a page with reference bit 0.
@@ -97,18 +85,12 @@ void clock_access(clock_cache* cache, int data) {
             }
 
             // Remove the page from the cache
-            start = clock();
             hmap_remove(cache->map, cache->cache[cache->currIdx]->data);
-            cache->totalHashmapTime += end_clock_time(start);
-
             cache->currSize--;
         }
 
         // Insert the page in the cache, at where the clock hand is pointing and set the reference bit to 1.
-        start = clock();
         hmap_insert(cache->map, data, copy_of(cache->currIdx));
-        cache->totalHashmapTime += end_clock_time(start);
-        
         cache->cache[cache->currIdx]->data = data;
         cache->cache[cache->currIdx]->rBit = 1;
         cache->currSize++;
@@ -187,6 +169,7 @@ void clock_destroy(clock_cache* cache) {
     for(int i = 0; i < cache->currSize; i++) {
         free(cache->cache[i]);
     }
+    free(cache->cache);
     hmap_free(cache->map);
     free(cache);
 }
@@ -215,5 +198,5 @@ double clock_get_hashmap_time(clock_cache* cache) {
         printf("Cache cannot be NULL\n");
         return 0;
     }
-    return cache->totalHashmapTime;
+    return hmap_get_time_taken(cache->map);
 }

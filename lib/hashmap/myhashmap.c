@@ -3,14 +3,30 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <time.h>
 
 #include "hashmap.h"
 #include "myhashmap.h"
+
+struct myhashmap {
+    hmap* map;
+    double totalTime;
+};
 
 struct pair {
     int key;
     void* value;
 };
+
+/*
+ * This method gets start time as parameter.
+ * Returns the time elapsed from start till now.
+ * Returns the time in milli-seconds.
+*/
+double end_clock_time(clock_t start) {
+    clock_t end = clock();
+    return (((double) (end - start)) / CLOCKS_PER_SEC) * 1000;
+}
 
 /*
  * This method gets the key-value pair as parameter with 2 seed values.
@@ -41,12 +57,21 @@ int key_compare(const void *a, const void *b, void *udata) {
 
 // Initializes and returns an empty hashmap
 hashmap* hmap_create() {
-    return hashmap_new(sizeof(struct pair), 0, 0, 0, hash_func, key_compare, NULL, NULL);
+    hashmap* map = malloc(sizeof(hashmap));
+    map->map = hashmap_new(sizeof(struct pair), 0, 0, 0, hash_func, key_compare, NULL, NULL);
+    map->totalTime = 0;
+    return map;
 }
 
 // Inserts the key and value into the map
 void hmap_insert(hashmap *map, int key, void* node) {
-    hashmap_set(map, &(struct pair) { .key=key, .value=node });
+    if(map == NULL) {
+        printf("Hashmap cannot be NULL\n");
+        return;
+    }
+    clock_t start = clock();
+    hashmap_set(map->map, &(struct pair) { .key=key, .value=node });
+    map->totalTime += end_clock_time(start);
 }
 
 /*
@@ -54,8 +79,14 @@ void hmap_insert(hashmap *map, int key, void* node) {
  * If the value is not found in the hashmap, Returns NULL.
 */
 void* hmap_get(hashmap* map, int key) {
+    if(map == NULL) {
+        printf("Hashmap cannot be NULL\n");
+        return NULL;
+    }
     const struct pair *p;
-    p = hashmap_get(map, &key);
+    clock_t start = clock();
+    p = hashmap_get(map->map, &key);
+    map->totalTime += end_clock_time(start);
     if(p == NULL) {
         return NULL;
     }
@@ -68,8 +99,14 @@ void* hmap_get(hashmap* map, int key) {
  * Returns false, if the key is not found in the map
 */
 bool hmap_remove(hashmap* map, int key) {
+    if(map == NULL) {
+        printf("Hashmap cannot be NULL\n");
+        return false;
+    }
     const struct pair* p;
-    p = hashmap_delete(map, &key);
+    clock_t start = clock();
+    p = hashmap_delete(map->map, &key);
+    map->totalTime += end_clock_time(start);
     if(p == NULL) {
         return false;
     }
@@ -82,8 +119,14 @@ bool hmap_remove(hashmap* map, int key) {
  * Returns false, if the key is not found in the map
 */
 bool hmap_contains(hashmap* map, int key) {
+    if(map == NULL) {
+        printf("Hashmap cannot be NULL\n");
+        return false;
+    }
     const struct pair *p;
-    p = hashmap_get(map, &key);
+    clock_t start = clock();
+    p = hashmap_get(map->map, &key);
+    map->totalTime += end_clock_time(start);
     if(p == NULL) {
         return false;
     }
@@ -92,5 +135,18 @@ bool hmap_contains(hashmap* map, int key) {
 
 // Free the memory allocated by the map
 void hmap_free(hashmap* map) {
-    hashmap_free(map);
+    if(map == NULL) {
+        printf("Hashmap cannot be NULL\n");
+        return;
+    }
+    hashmap_free(map->map);
+    free(map);
+}
+
+double hmap_get_time_taken(hashmap* map) {
+    if(map == NULL) {
+        printf("Hashmap cannot be NULL\n");
+        return 0;
+    }
+    return map->totalTime;
 }

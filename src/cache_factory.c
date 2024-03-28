@@ -151,5 +151,5 @@ double cache_get_hashmap_time(generic_cache* cache) {
         printf("Cache cannot be NULL\n");
         return 0;
     }
-    cache->get_hashmap_time(cache->cache);
+    return cache->get_hashmap_time(cache->cache);
 }

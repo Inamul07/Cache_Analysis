@@ -11,7 +11,8 @@
 
 #include "hashmap.h"
 
-typedef struct hashmap hashmap;
+typedef struct hashmap hmap;
+typedef struct myhashmap hashmap;
 struct pair;
 
 hashmap* hmap_create();
@@ -20,5 +21,6 @@ void* hmap_get(hashmap* map, int key);
 bool hmap_remove(hashmap* map, int key);
 bool hmap_contains(hashmap* map, int key);
 void hmap_free(hashmap* map);
+double hmap_get_time_taken(hashmap* map);
 
 #endif
