@@ -3,15 +3,13 @@
 #include <iostream>
 #include <fstream>
 
-#define SEQ 0
-#define LOOP 1
-#define RAND 2
-
 using namespace std;
 
 extern "C" {
     #include "cache_factory.h"
 }
+
+typedef enum patternType { SEQ, LOOP, RAND} patternType;
 
 /*
  * This methods reads the file then stores and returns the contents of the file as a vector.
@@ -40,8 +38,7 @@ vector<int> getDataSet(string &filename) {
     It returns data/file_seq_100.txt
  * If invalid access pattern is passed, this returns an empty string
 */
-// Code_Review: make accessPattern enum
-string getFileName(int count, int accessPattern) {
+string getFileName(int count, patternType accessPattern) {
     string prefix = "data/file_";
     string suffix = ".txt";
     string pattern;
@@ -50,8 +47,7 @@ string getFileName(int count, int accessPattern) {
     else if(accessPattern == RAND) pattern = "rand";
     else {
         cout << "Invalid Access Pattern" << endl;
-        //Code_Review: Exit here
-        return "";
+        exit(0);
     }
     return prefix + pattern + "_" + to_string(count) + suffix;
 }
@@ -62,7 +58,7 @@ string getFileName(int count, int accessPattern) {
  * Example: If cacheSize = 10, numOfPages = 100, type = ARC, accessPattern = LOOP
     It returns "ARC_LOOP/10/100".
 */
-string getBenchmarkName(int cacheSize, int numOfPages, cacheType type, int accessPattern) {
+string getBenchmarkName(int cacheSize, int numOfPages, cacheType type, patternType accessPattern) {
     string cacheName;
     switch(type) {
         case LRU:
@@ -100,7 +96,7 @@ string getBenchmarkName(int cacheSize, int numOfPages, cacheType type, int acces
 }
 
 // Benchmark Function
-static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cacheType cacheName, int accessPattern) {
+static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cacheType cacheName, patternType accessPattern) {
     generic_cache* cache = cache_init(cacheName, cacheSize);
     string filename = getFileName(numOfPages, accessPattern);
     vector<int> pages = getDataSet(filename);
@@ -111,24 +107,13 @@ static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cac
 
     double hitRatio = cache_get_hit_ratio(cache) * 100.0;
     state.counters["Hit Ratio[%]"] = hitRatio;
-    // Code Review: avg needed?
-    state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache)) / state.iterations();
+    state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache));
 
     cache_destroy(cache);
-    
-    // if(cacheSize == 100 && numOfPages == 10000 && !(cacheName == LRU && accessPattern == SEQ)) {
-    //     cout << "------------------------------------------------------------------------------------------------------------" << endl;
-    //     cout << "Benchmark                                        Time             CPU   Iterations Hashmap Time Hit Ratio[%]" << endl;
-    //     cout << "------------------------------------------------------------------------------------------------------------" << endl;
-    // }
 }
 
 // A Helper Benchmark To Seperate between the Cache Benchmarks...
 static void BM_SEP(benchmark::State &state) {
-    for(auto _ : state) {
-        
-    }
-    // Code Review: just return?
 }
 
 int main(int argv, char** args) {
@@ -136,14 +121,15 @@ int main(int argv, char** args) {
     vector<int> cacheSizes = {100, 150, 200};
     vector<int> pageCounts = {10000, 100000, 1000000};
     vector<cacheType> cacheTypes = {LRU, CLOCK, TWO_QUEUE, ARC};
-    vector<int> accessPatterns = {SEQ, LOOP, RAND};
+    vector<patternType> accessPatterns = {SEQ, LOOP, RAND};
 
-    for(int accessPattern : accessPatterns) {
+    for(patternType accessPattern : accessPatterns) {
         for(cacheType cacheName : cacheTypes) {
             for(int cacheSize : cacheSizes) {
                 for(int numOfPages : pageCounts) {
                     // Registering a Benchmark with different cacheSize, numOfPages, cacheName and accessPattern
                     benchmark::RegisterBenchmark(getBenchmarkName(cacheSize, numOfPages, cacheName, accessPattern), BM_CACHE, cacheSize, numOfPages, cacheName, accessPattern)
+                        ->Iterations(1)
                         ->Unit(benchmark::kMillisecond);
                 }
             }
