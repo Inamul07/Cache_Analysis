@@ -126,7 +126,7 @@ void cache_destroy(generic_cache* cache) {
         return;
     }
     cache->destroy(cache->cache);
-    // Code_Review: free generic_cache pointer
+    free(cache);
 }
 
 /*
