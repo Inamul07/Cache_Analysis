@@ -50,7 +50,7 @@ public class DataGenerator {
      */
     private static void generateLoopingData(int count) {
         int[] arr = new int[count];
-        int[] loopParam = {200, 400, 600};
+        int[] loopParam = {100, 150, 200, 400, 600};
         int loopParamIdx = getRandomNumber(0, loopParam.length - 1), val = 1;
         for(int i = 0; i < count; i++) {
             arr[i] = val++;

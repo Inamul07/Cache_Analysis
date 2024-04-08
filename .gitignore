@@ -3,3 +3,4 @@
 main
 bench
 *.class
+data/

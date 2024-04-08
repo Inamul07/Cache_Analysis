@@ -97,19 +97,23 @@ string getBenchmarkName(int cacheSize, int numOfPages, cacheType type, patternTy
 
 // Benchmark Function
 static void BM_CACHE(benchmark::State &state, int cacheSize, int numOfPages, cacheType cacheName, patternType accessPattern) {
-    generic_cache* cache = cache_init(cacheName, cacheSize);
     string filename = getFileName(numOfPages, accessPattern);
     vector<int> pages = getDataSet(filename);
 
+    double totalHitRatio = 0;
+    double totalHashMapTime = 0;
+
     for(auto _ : state) {
+        generic_cache* cache = cache_init(cacheName, cacheSize);
         cache_put_array(cache, pages.data(), pages.size());
+        totalHitRatio += (cache_get_hit_ratio(cache) * 100.0);
+        totalHashMapTime += cache_get_hashmap_time(cache);
+        cache_destroy(cache);
     }
 
-    double hitRatio = cache_get_hit_ratio(cache) * 100.0;
-    state.counters["Hit Ratio[%]"] = hitRatio;
-    state.counters["Hashmap Time"] = (cache_get_hashmap_time(cache));
+    state.counters["Hit Ratio[%]"] = totalHitRatio / state.iterations();
+    state.counters["Hashmap Time"] = totalHashMapTime / state.iterations();
 
-    cache_destroy(cache);
 }
 
 // A Helper Benchmark To Seperate between the Cache Benchmarks...
@@ -129,7 +133,6 @@ int main(int argv, char** args) {
                 for(int numOfPages : pageCounts) {
                     // Registering a Benchmark with different cacheSize, numOfPages, cacheName and accessPattern
                     benchmark::RegisterBenchmark(getBenchmarkName(cacheSize, numOfPages, cacheName, accessPattern), BM_CACHE, cacheSize, numOfPages, cacheName, accessPattern)
-                        ->Iterations(1)
                         ->Unit(benchmark::kMillisecond);
                 }
             }
